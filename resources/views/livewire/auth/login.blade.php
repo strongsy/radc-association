@@ -29,6 +29,15 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $this->ensureIsNotRateLimited();
 
+        $user = \App\Models\User::where('email', $this->email)->first();
+
+        // Check if the user exists and is blocked
+        if ($user && $user->is_blocked) {
+            throw ValidationException::withMessages([
+                'email' => __('Your account is blocked. Please contact support.'),
+            ]);
+        }
+
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
@@ -77,7 +86,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <form wire:submit="login" class="flex flex-col gap-6">
         <!-- Email Address -->
@@ -85,7 +98,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             wire:model="email"
             :label="__('Email address')"
             type="email"
-            required
+            :required
             autofocus
             autocomplete="email"
             placeholder="email@example.com"
@@ -103,7 +116,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             />
 
             @if (Route::has('password.request'))
-                <flux:link class="absolute right-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
+                <flux:link class="absolute right-0 top-0 text-sm" :href="route('password.request')" :wire:navigate>
                     {{ __('Forgot your password?') }}
                 </flux:link>
             @endif

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
+        <title>{{ config('app.name') }}</title>
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
@@ -14,8 +15,45 @@
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+
+                    <!--article route -->
+                    @can('article-list')
+                        <flux:navlist.item icon="pencil-square" :href="route('article.index')" :current="request()->routeIs('article.index')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
+                    @endcan
+
+                    <!-- mail route -->
+                    @can('mail-list')
+                        <flux:navlist.item icon="envelope" :href="route('mail.index')" :current="request()->routeIs('mail.index')" wire:navigate>{{ __('Emails') }}</flux:navlist.item>
+                    @endcan
+
+                    <!--event route -->
+                    @can('event-list')
+                        <flux:navlist.item icon="calendar-days" :href="route('event.index')" :current="request()->routeIs('event.index')" wire:navigate>{{ __('Events') }}</flux:navlist.item>
+                    @endcan
+
+                    <!--post route -->
+                    @can('post-list')
+                        <flux:navlist.item icon="microphone" :href="route('post.index')" :current="request()->routeIs('post.index')" wire:navigate>{{ __('Posts') }}</flux:navlist.item>
+                    @endcan
+
+                    <!--registrant route -->
+                    @can('registrant-list')
+                        <flux:navlist.item icon="user-plus" :href="route('registrant.index')" :current="request()->routeIs('registrant.index')" wire:navigate>{{ __('Registrants') }}</flux:navlist.item>
+                    @endcan
+
+                    <!--story route -->
+                    @can('story-list')
+                        <flux:navlist.item icon="paper-clip" :href="route('story.index')" :current="request()->routeIs('story.index')" wire:navigate>{{ __('Stories') }}</flux:navlist.item>
+                    @endcan
+
+                    <!-- user route -->
+                    @can('users-list')
+                        <flux:navlist.item icon="users" :href="route('user.index')" :current="request()->routeIs('user.index')" wire:navigate>{{ __('Users') }}</flux:navlist.item>
+                    @endcan
+
                 </flux:navlist.group>
             </flux:navlist>
+
 
             <flux:spacer />
 
@@ -128,5 +166,8 @@
         {{ $slot }}
 
         @fluxScripts
+        @persist('toast')
+        <flux:toast position="top right" class="pt-24"/>
+        @endpersist
     </body>
 </html>

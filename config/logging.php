@@ -14,7 +14,7 @@ return [
     |
     | This option defines the default log channel that is utilized to write
     | messages to your logs. The value provided here should match one of
-    | the channels present in the list of "channels" configured below.
+    | the channels present in the index of "channels" configured below.
     |
     */
 

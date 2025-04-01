@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Factories\RegistrantFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +13,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create an instance of the RoleAndPermissionSeeder class
+        $roleAndPermissionSeeder = new RoleAndPermissionSeeder();
+        $roleAndPermissionSeeder->run(); // Call the run method on the instance
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+
+        /**
+         * create super admin user
+         */
+        $user = User::factory()->create([
+            'name' => 'Paul Armstrong',
+            'email' => 'strongs@icloud.com',
+            'password' => bcrypt('ginpalsup'),
+            'community' => 'Veteran',
+            'membership' => 'Life',
+            'affiliation' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quae.',
+            'is_subscribed' => true,
+            'is_blocked' => false,
         ]);
+
+        $user->assignRole('super-admin');
+
+        RegistrantFactory::new()->count(20)->create();
+
+        //create users
+        /*$newUser = User::factory(10)->create();
+
+        foreach ($newUser as $user) {
+            $user->assignRole('user');
+        }*/
     }
 }
