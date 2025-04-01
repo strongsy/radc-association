@@ -1,7 +1,7 @@
 <x-layouts.front-end title="The RADC Chapel">
     <flux:container
         class="flex w-full flex-col items-start starting:opacity-0 opacity-100 transition-opacity duration-750 md:grow">
-        <flux:heading size="xl" level="1" class="mb-5 flex flex-row">The RADC Chapel
+        <flux:heading size="xl" level="1" class="my-10 flex flex-row">The RADC Chapel
         </flux:heading>
     </flux:container>
 

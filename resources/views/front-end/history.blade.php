@@ -1,7 +1,7 @@
 <x-layouts.front-end title="History of the RADC">
     <flux:container
         class="flex w-full flex-col items-start starting:opacity-0 opacity-100 transition-opacity duration-750 md:grow">
-        <flux:heading size="xl" level="1" class="mb-5 flex flex-row">History of the RADC
+        <flux:heading size="xl" level="1" class="my-10 flex flex-row">History of the RADC
         </flux:heading>
     </flux:container>
 

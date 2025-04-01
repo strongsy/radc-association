@@ -31,8 +31,12 @@ class ContactUsAdminMail extends Mailable implements ShouldQueue
     {
         return new Content(
             markdown: 'emails.contact-us-admin',
-
-        );
+            with: [
+                'name' => $this->data['name'],
+                'email' => $this->data['email'],
+                'subject' => $this->data['subject'],
+                'message' => $this->data['message'],
+            ]);
     }
 
     public function attachments(): array

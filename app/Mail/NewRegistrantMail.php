@@ -34,8 +34,9 @@ class NewRegistrantMail extends Mailable implements ShouldQueue
             with: [
                 'name' => $this->data['name'],
                 'email' => $this->data['email'],
-                'subject' => $this->data['subject'],
-                'message' => $this->data['message'],
+                'community' => $this->data['community'],
+                'membership' => $this->data['membership'],
+                'affiliation' => $this->data['affiliation'],
             ]);
     }
 

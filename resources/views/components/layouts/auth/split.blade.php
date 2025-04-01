@@ -15,17 +15,6 @@
                     </span>
                     {{ config('app.name', 'Laravel') }}
                 </a>
-
-                {{--@php
-                    [$message, $author] = str(Illuminate\Foundation\Inspiring::quotes()->random())->explode('-');
-                @endphp--}}
-
-                {{--<div class="relative z-20 mt-auto">
-                    <blockquote class="space-y-2">
-                        <flux:heading size="lg">&ldquo;{{ trim($message) }}&rdquo;</flux:heading>
-                        <footer><flux:heading>{{ trim($author) }}</flux:heading></footer>
-                    </blockquote>
-                </div>--}}
             </div>
             <div class="w-full lg:p-8">
                 <div class="mx-auto  flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
