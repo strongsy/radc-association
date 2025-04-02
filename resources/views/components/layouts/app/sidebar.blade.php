@@ -32,6 +32,11 @@
                     @endcan
 
                     <!--post route -->
+                    @can('media-list')
+                        <flux:navlist.item icon="photo" :href="route('media.index')" :current="request()->routeIs('media.index')" wire:navigate>{{ __('Media') }}</flux:navlist.item>
+                    @endcan
+
+                    <!--post route -->
                     @can('post-list')
                         <flux:navlist.item icon="microphone" :href="route('post.index')" :current="request()->routeIs('post.index')" wire:navigate>{{ __('Posts') }}</flux:navlist.item>
                     @endcan

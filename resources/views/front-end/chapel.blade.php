@@ -9,7 +9,7 @@
         class="flex w-full flex-col gap-10 items-start starting:opacity-0 opacity-100 transition-opacity duration-750 md:grow">
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ asset('storage/images/chapel/chapel01.png') }}"
+                <img src="{{ Storage::disk('s3')->url('chapel01.png') }}"
                      alt="The RADC Book of Remembrance"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="The RADC Book of Remembrance"/>
@@ -77,7 +77,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ asset('storage/images/chapel/chapel02.png') }}"
+                <img src="{{ Storage::disk('s3')->url('chapel02.png') }}"
                      alt="Outside the Garrison Church of All Saints"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Outside the Garrison Church of All Saints"/>

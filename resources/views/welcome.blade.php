@@ -19,7 +19,7 @@
                 <flux-container class="flex-initial">
                     <img
                         class="w-full h-auto max-w-none rounded-t-lg translate-y-0 starting:translate-y-6 object-cover starting:opacity-0 opacity-100 transition-all duration-750"
-                        src="{{ asset('storage/images/home/home02.png') }}" alt=""/>
+                        src="{{ Storage::disk('s3')->url('home01.png') }}" alt=""/>
                 </flux-container>
 
                 <flux-container class="flex-auto">
@@ -38,12 +38,6 @@
                             announcement and
                             then the conduct of the general election; and, finally...
                         </flux:text>
-                        <a href="{{ route('about') }}">
-                            <flux:button variant="primary" class="mt-3 w-min" icon-trailing="arrow-right" aria-label="Read more about the corps amalgamation">
-                                Read More
-                            </flux:button>
-                        </a>
-
                     </flux-container>
                 </flux-container>
             </flux-container>
@@ -53,7 +47,7 @@
                 <flux-container class="flex-initial">
                     <img
                         class="h-auto w-full max-w-none rounded-t-lg translate-y-0 starting:translate-y-6 object-cover starting:opacity-0 opacity-100 transition-all duration-750"
-                        src="{{ asset('storage/images/home/home01.png') }}" alt=""/>
+                        src="{{ Storage::disk('s3')->url('home02.png') }}" alt=""/>
                 </flux-container>
 
                 <flux-container class="flex-auto">
@@ -71,6 +65,12 @@
                             by a series of events: the death of our Late Queen; the coronation; the
                             announcement and
                             then the conduct of the general election; and, finally...
+
+                            <a href="{{ route('about') }}">
+                                <flux:button variant="primary" class="mt-3 w-min" icon-trailing="arrow-right" aria-label="Read more about the corps amalgamation">
+                                    Read More
+                                </flux:button>
+                            </a>
                         </flux:text>
                     </flux-container>
                 </flux-container>
@@ -92,7 +92,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ asset('storage/images/home/history.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('history.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -122,7 +122,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ asset('storage/images/home/chapel.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('chapel.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -153,7 +153,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ asset('storage/images/home/memorial.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('memorial.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -183,7 +183,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ asset('storage/images/home/museum.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('museum.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
