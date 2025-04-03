@@ -35,7 +35,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $this->validate([
             'token' => ['required'],
             'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'string', 'confirmed', Rules\Password::min(8)->mixedCase()->numbers()->symbols()],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -56,7 +56,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
-        if ($status != Password::PasswordReset) {
+        if ($status !== Password::PasswordReset) {
             $this->addError('email', __($status));
 
             return;
@@ -80,7 +80,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             wire:model="email"
             :label="__('Email')"
             type="email"
-            required
+            required=""
             autocomplete="email"
         />
 
@@ -89,17 +89,18 @@ new #[Layout('components.layouts.auth')] class extends Component {
             wire:model="password"
             :label="__('Password')"
             type="password"
-            required
+            required=""
             autocomplete="new-password"
             :placeholder="__('Password')"
         />
+        <flux:description>Must be at least 8 characters long, include an uppercase letter, a number, and a special character.</flux:description>
 
         <!-- Confirm Password -->
         <flux:input
             wire:model="password_confirmation"
             :label="__('Confirm password')"
             type="password"
-            required
+            required=""
             autocomplete="new-password"
             :placeholder="__('Confirm password')"
         />

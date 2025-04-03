@@ -119,17 +119,17 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'story-force-delete']);
 
         //media permissions
-        Permission::create(['name' => 'media-index']);
-        Permission::create(['name' => 'media-create']);
-        Permission::create(['name' => 'media-read']);
-        Permission::create(['name' => 'media-publish']);
-        Permission::create(['name' => 'media-unpublish']);
-        Permission::create(['name' => 'media-approve']);
-        Permission::create(['name' => 'media-unapproved']);
-        Permission::create(['name' => 'media-update']);
-        Permission::create(['name' => 'media-destroy']);
-        Permission::create(['name' => 'media-restore']);
-        Permission::create(['name' => 'media-force-delete']);
+        Permission::create(['name' => 'gallery-index']);
+        Permission::create(['name' => 'gallery-create']);
+        Permission::create(['name' => 'gallery-read']);
+        Permission::create(['name' => 'gallery-publish']);
+        Permission::create(['name' => 'gallery-unpublish']);
+        Permission::create(['name' => 'gallery-approve']);
+        Permission::create(['name' => 'gallery-unapproved']);
+        Permission::create(['name' => 'gallery-update']);
+        Permission::create(['name' => 'gallery-destroy']);
+        Permission::create(['name' => 'gallery-restore']);
+        Permission::create(['name' => 'gallery-force-delete']);
 
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();

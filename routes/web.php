@@ -32,7 +32,7 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Volt::route('contact', 'auth.contact')->name('contact');
+Volt::route('contact', 'auth.contact')->middleware(ProtectAgainstSpam::class)->name('contact');
 
 
 Route::middleware(['auth'])->group(function () {

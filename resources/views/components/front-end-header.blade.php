@@ -1,4 +1,4 @@
-<div>
+<div class="flex w-full flex-col">
     <!--navbar-->
     <flux:container class="flex flex-row space-x-20 w-full items-center justify-between">
         <a href="{{ route('home') }}" class="ml-2 mr-5 items-center space-x-2 lg:ml-0 hidden lg:flex" wire:navigate>
@@ -28,10 +28,9 @@
                 (RADC) to meet and socialise.
             </flux:heading>
 
-            <a href="{{ route('register') }}">
-                <flux:button variant="danger" icon-trailing="arrow-right" aria-label="Register button to join the community"
-                >
-                    Register
+            <a href="{{ route('login') }}">
+                <flux:button variant="danger" icon-trailing="arrow-right" aria-label="Register button to join the community">
+                    Login
                 </flux:button>
             </a>
         </flux:container>

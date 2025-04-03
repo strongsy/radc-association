@@ -2,18 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Media;
+use App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
-class MediaFactory extends Factory
+class GalleryFactory extends Factory
 {
-    protected $model = Media::class;
+    protected $model = Gallery::class;
 
     public function definition(): array
     {
         return [
-            'user_id' => $this->faker->word(),
             'title' => $this->faker->word(),
             'caption' => $this->faker->word(),
             'created_at' => Carbon::now(),
