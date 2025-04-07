@@ -3,6 +3,7 @@
 use App\Jobs\RegistrantApprovedJob;
 use App\Models\Registrant;
 use App\Models\User;
+use App\Traits\WithSortingAndSearching;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -12,53 +13,8 @@ use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
 new class extends Component {
-    use WithPagination;
+    use WithPagination, WithSortingAndSearching;
 
-    public string $search = '';
-
-    //import Livewire\Attributes\Url
-    #[Url]
-    public string $sortBy = 'name';
-
-    //import Livewire\Attributes\Url
-    #[Url]
-    public string $sortDirection = 'desc';
-
-    /**
-     * Handle the updated search event and reset the pagination.
-     *
-     * @return void
-     */
-    public function updatedSearch(): void
-    {
-        $this->resetPage();
-    }
-
-    public function sort($column): void
-    {
-        if ($this->sortBy === $column) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $column;
-            $this->sortDirection = 'asc';
-        }
-    }
-
-    /**
-     * Apply search filters to the provided query based on the current search term.
-     *
-     * @param mixed $query
-     *
-     * @return mixed
-     */
-    protected function search(mixed $query): mixed
-    {
-        return $this->search === ''
-            ? $query
-            : $query
-                ->where('email', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%');
-    }
 
     /**
      * Approve a registrant and convert to user.
@@ -125,6 +81,8 @@ new class extends Component {
 
         $user = User::create($validatedData);
 
+        $user->assignRole('user');
+
         RegistrantApprovedJob::dispatch($validatedData);
         $user->sendEmailVerificationNotification();
     }
@@ -136,9 +94,12 @@ new class extends Component {
      *
      * @return void
      */
-    protected function deleteRegistrant(int|string $registrantId): void
+    public function deleteRegistrant(int|string $registrantId): void
     {
         $registrant = Registrant::findOrFail($registrantId);
+
+        $this->authorize('delete', $registrant);
+
         $registrant->delete();
 
         Flux::toast(
@@ -148,20 +109,44 @@ new class extends Component {
         );
     }
 
+    /**
+     * Apply search filters to a query.
+     *
+     * @param $query
+     * @return mixed
+     */
+    protected function applySearchFilters($query): mixed
+    {
+        if (empty($this->search)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) {
+            $q->where('email', 'like', '%' . $this->search . '%')
+                ->orWhere('name', 'like', '%' . $this->search . '%')
+                ->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') like ?", [
+                    '%' . $this->search . '%',
+                ]);
+        });
+    }
+
     #[computed]
     public function with(): array
     {
         $query = Registrant::query();
 
         // Apply search and order
-        $filtered = $this->search($query);
+        $filtered = $this->applySearchFilters($query);
 
-        $sorted = $filtered->orderBy($this->sortBy, $this->sortDirection);
+        // Apply sorting filter if applicable
+        $query = $this->applySorting($query);
 
         // Paginate the data
-        $paginated = $sorted->paginate(10);
+        $paginated = $query->paginate(10);
 
-        return ['registrants' => $paginated];
+        return [
+            'registrants' => $paginated,
+        ];
 
     }
 }; ?>
@@ -183,20 +168,35 @@ new class extends Component {
         </div>
     </div>
 
+    <x-search-and-sort
+        :search="$search"
+        :sortBy="$sortBy"
+        :sortDirection="$sortDirection"
+    />
+
     <flux:separator variant="subtle"/>
 
     <flux:table :paginate="$registrants">
-        <flux:table.columns>
-            <flux:table.column>Affiliation</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">
-                Name
-            </flux:table.column>
-            <flux:table.column>Email</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'community'" :direction="$sortDirection" wire:click="sort('community')">Community</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'membership'" :direction="$sortDirection" wire:click="sort('membership')">Membership</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection" wire:click="sort('created_at')">Registered At</flux:table.column>
-            <flux:table.column>Actions</flux:table.column>
-        </flux:table.columns>
+        @if ($registrants->count() > 0)
+            <flux:table.columns>
+                <flux:table.column>Affiliation</flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection"
+                                   wire:click="sort('name')">
+                    Name
+                </flux:table.column>
+                <flux:table.column>Email</flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'community'" :direction="$sortDirection"
+                                   wire:click="sort('community')">Community
+                </flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'membership'" :direction="$sortDirection"
+                                   wire:click="sort('membership')">Membership
+                </flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection"
+                                   wire:click="sort('created_at')">Registered At
+                </flux:table.column>
+                <flux:table.column>Actions</flux:table.column>
+            </flux:table.columns>
+        @endif
 
         <flux:table.rows>
             @forelse ($registrants as $registrant)
@@ -226,25 +226,29 @@ new class extends Component {
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $registrant->community->variant() ?? 'N/A' }}">{{ $registrant->community }}</flux:badge>
+                                    color="{{ $registrant->community->variant() ?? 'N/A' }}">{{ $registrant->community ?? 'N/A' }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $registrant->membership->variant() ?? 'N/A' }}">{{ $registrant->membership }}</flux:badge>
+                                    color="{{ $registrant->membership->variant() }}">{{ $registrant->membership  ?? 'N/A' }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>{{ $registrant->created_at->format('d M Y, g:i A') ?? 'N/A' }}</flux:table.cell>
 
+                    <!--actions-->
                     <flux:table.cell>
                         <flux:dropdown position="bottom" align="end" offset="-15">
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
                                 <flux:menu.item icon="lock-open"
-                                                wire:click="approveRegistrant({{ $registrant->id }})">Approve
+                                                wire:click="approveRegistrant({{ $registrant->id ?? 'N/A' }})"
+                                                wire:confirm="Are you sure that you want to authorise this registrant to access the site?">
+                                    Approve
                                 </flux:menu.item>
-                                <flux:menu.item icon="user-minus" wire:click="deleteRegistrant({{ $registrant->id }})">
+                                <flux:menu.item icon="user-minus" wire:click="deleteRegistrant({{ $registrant->id ?? 'N/A' }})"
+                                                wire:confirm="Are you sure that you want to delete this registrant?">
                                     Delete
                                 </flux:menu.item>
                             </flux:menu>
@@ -259,27 +263,4 @@ new class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    <!-- Livewire component example code...
-        use \Livewire\WithPagination;
-
-        public $sortBy = 'date';
-        public $sortDirection = 'desc';
-
-        public function sort($column) {
-            if ($this->sortBy === $column) {
-                $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                $this->sortBy = $column;
-                $this->sortDirection = 'asc';
-            }
-        }
-
-        #[\Livewire\Attributes\Computed]
-        public function orders()
-        {
-            return \App\Models\Order::query()
-                ->tap(fn ($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)
-                ->paginate(5);
-        }
-    -->
 </div>

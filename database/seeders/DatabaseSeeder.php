@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Database\Factories\RegistrantFactory;
+//use Database\Factories\MailFactory;
+//use Database\Factories\RegistrantFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,17 +28,21 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('ginpalsup'),
             'community' => 'Veteran',
             'membership' => 'Life',
-            'affiliation' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quae.',
+            'affiliation' => 'All files within the bucket are public and are publicly accessible via the Internet via a Laravel Cloud provided URL. These buckets are typically used for publicly viewable assets like user avatars.',
             'is_subscribed' => true,
             'is_blocked' => false,
         ]);
 
         $user->assignRole('super-admin');
 
-        RegistrantFactory::new()->count(20)->create();
+        //create registrants
+        /*RegistrantFactory::new()->count(20)->create();
+
+        //create mail
+        MailFactory::new()->count(20)->create();
 
         //create users
-        /*$newUser = User::factory(10)->create();
+        $newUser = User::factory(10)->create();
 
         foreach ($newUser as $user) {
             $user->assignRole('user');

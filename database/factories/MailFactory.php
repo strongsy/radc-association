@@ -15,9 +15,9 @@ class MailFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'subject' => $this->faker->word(),
-            'message' => $this->faker->word(),
-            'created_at' => Carbon::now(),
+            'subject' => $this->faker->words(5, true),
+            'message' => $this->faker->paragraphs(3, true),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'updated_at' => Carbon::now(),
         ];
     }

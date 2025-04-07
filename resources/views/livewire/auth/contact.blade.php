@@ -42,6 +42,10 @@ new #[Layout('components.layouts.auth')] class extends Component
 
         Mail::create($validated);
 
+        // Flash a success message that will persist for the next request
+        session()->flash('success', 'Your message has been submitted successfully!');
+
+
         // Define your recipients
         $recipients = [config('MAIL_TO_ADDRESS', 'sec@radc.org.uk')];
 
@@ -50,14 +54,7 @@ new #[Layout('components.layouts.auth')] class extends Component
 
 
         $this->reset();
-
-        $this->redirectIntended(route('home', absolute: false), navigate: true);
-
-        Flux::toast(
-            'Your message has been sent!',
-            'We have received your contact us submission and will respond by email shortly.',
-            'success',
-        );
+        //$this->redirectIntended(route('home', absolute: false), navigate: true);
     }
 }; ?>
 
@@ -65,12 +62,20 @@ new #[Layout('components.layouts.auth')] class extends Component
     <x-auth-header :title="__('Contact Us')"
                    :description="__('Enter your details and we will get back to you as soon as possible.')"/>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="text-center bg-emerald-600  p-2 rounded-sm" :status="session('status')"/>
+
+    @if(session('success'))
+        <div class="alert alert-success ">
+            <flux:heading size="sm" level="3" class="text-teal-600 dark:text-teal-400">
+                {{ session('success') }}
+            </flux:heading>
+
+        </div>
+    @endif
+
 
     <form wire:submit="contact" class="flex flex-col gap-6">
         <x-honeypot livewire-model="extraFields" />
-        <input name="myField" type="text">
+        <input name="myField" hidden type="text">
         <!-- Name -->
         <flux:input
                 wire:model="name"

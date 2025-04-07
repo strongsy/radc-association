@@ -37,6 +37,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'mail-restore']);
         Permission::create(['name' => 'mail-force-delete']);
         Permission::create(['name' => 'mail-destroy']);
+        Permission::create(['name' => 'mail-reply']);
 
         //reply permissions
         Permission::create(['name' => 'reply-index']);
@@ -118,7 +119,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'story-restore']);
         Permission::create(['name' => 'story-force-delete']);
 
-        //media permissions
+        //gallery permissions
         Permission::create(['name' => 'gallery-index']);
         Permission::create(['name' => 'gallery-create']);
         Permission::create(['name' => 'gallery-read']);
@@ -130,6 +131,32 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'gallery-destroy']);
         Permission::create(['name' => 'gallery-restore']);
         Permission::create(['name' => 'gallery-force-delete']);
+
+        //album permissions
+        Permission::create(['name' => 'album-index']);
+        Permission::create(['name' => 'album-create']);
+        Permission::create(['name' => 'album-read']);
+        Permission::create(['name' => 'album-publish']);
+        Permission::create(['name' => 'album-unpublish']);
+        Permission::create(['name' => 'album-approve']);
+        Permission::create(['name' => 'album-unapproved']);
+        Permission::create(['name' => 'album-update']);
+        Permission::create(['name' => 'album-destroy']);
+        Permission::create(['name' => 'album-restore']);
+        Permission::create(['name' => 'album-force-delete']);
+
+        //image permissions
+        Permission::create(['name' => 'image-index']);
+        Permission::create(['name' => 'image-create']);
+        Permission::create(['name' => 'image-read']);
+        Permission::create(['name' => 'image-publish']);
+        Permission::create(['name' => 'image-unpublish']);
+        Permission::create(['name' => 'image-approve']);
+        Permission::create(['name' => 'image-unapproved']);
+        Permission::create(['name' => 'image-update']);
+        Permission::create(['name' => 'image-destroy']);
+        Permission::create(['name' => 'image-restore']);
+        Permission::create(['name' => 'image-force-delete']);
 
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();

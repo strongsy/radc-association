@@ -4,20 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Gallery extends Model
+class Image extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'album_id',
+        'user_id',
         'title',
         'caption',
     ];
-
-    public function mail(): hasMany {
-        return $this->hasMany(Album::class);
-    }
-
 }

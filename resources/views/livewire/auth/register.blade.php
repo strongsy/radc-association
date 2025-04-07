@@ -34,6 +34,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         Registrant::create($validated);
 
+        // Flash a success message that will persist for the next request
+        session()->flash('success', 'Your registration details have been submitted successfully!');
+
         // Define your recipients
         $recipients = [config('MAIL_TO_ADDRESS', 'sec@radc.org.uk')];
 
@@ -42,14 +45,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
 
         $this->reset();
-
-        Flux::toast(
-            'Registration Received!',
-            'We have received your registration request and will respond by email if you submission is successful.',
-            'success',
-        );
-
-        $this->redirectIntended(route('home', absolute: false), navigate: true);
+        //$this->redirectIntended(route('home', absolute: false), navigate: true);
     }
 }; ?>
 
@@ -58,7 +54,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
                    :description="__('Enter your details and we will get back to you as soon as possible.')"/>
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center bg-emerald-600  p-2 rounded-sm" :status="session('status')"/>
+    @if(session('success'))
+        <div class="alert alert-success ">
+            <flux:heading size="sm" level="3" class="text-teal-600 dark:text-teal-400">
+                {{ session('success') }}
+            </flux:heading>
+
+        </div>
+    @endif
 
     <form wire:submit="registration" class="flex flex-col gap-6">
         <!-- Name -->

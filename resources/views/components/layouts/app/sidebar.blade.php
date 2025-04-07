@@ -31,9 +31,9 @@
                         <flux:navlist.item icon="calendar-days" :href="route('event.index')" :current="request()->routeIs('event.index')" wire:navigate>{{ __('Events') }}</flux:navlist.item>
                     @endcan
 
-                    <!--post route -->
+                    <!--gallery route -->
                     @can('media-list')
-                        <flux:navlist.item icon="photo" :href="route('media.index')" :current="request()->routeIs('media.index')" wire:navigate>{{ __('Media') }}</flux:navlist.item>
+                        <flux:navlist.item icon="photo" :href="route('gallery.index')" :current="request()->routeIs('gallery.index')" wire:navigate>{{ __('Galleries') }}</flux:navlist.item>
                     @endcan
 
                     <!--post route -->

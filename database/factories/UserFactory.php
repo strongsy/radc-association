@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'community' => fake()->randomElement(['Serving', 'Reserve', 'Veteran', 'Civilian', 'Other']),
-            'membership' => fake()->randomElement(['Life', 'Annual', 'Not sure']),
+            'membership' => fake()->randomElement(['Life', 'Annual', 'Unknown']),
             'affiliation' => fake()->paragraphs(2, true),
             'is_subscribed' => fake()->randomelement([true, false]),
             'is_blocked' => fake()->randomelement([true, false]),

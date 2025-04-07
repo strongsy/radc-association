@@ -2,74 +2,124 @@
 
 use App\Jobs\RegistrantApprovedJob;
 use App\Models\User;
+use App\Traits\WithSortingAndSearching;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\NoReturn;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
 new class extends Component {
-    use WithPagination;
+    use WithPagination, WithSortingAndSearching;
 
-    public string $search = '';
+    public bool $showUserRolesModal = false;
 
-    //import Livewire\Attributes\Url
-    #[Url]
-    public string $sortBy = 'name';
+    public array $selectedRoles = [];
 
-    //import Livewire\Attributes\Url
-    #[Url]
-    public string $sortDirection = 'desc';
+    public array $availableRoles = [];
+
+    public array $user = [];
+
+    public array $roleColors = [
+        'super-admin' => 'yellow',
+        'admin' => 'red',
+        'editor' => 'blue',
+        'moderator' => 'green',
+        'user' => 'purple',
+    ];
+
+
+    protected array $rules = [
+        'selectedRoles' => 'array',
+        'selectedRoles.*' => 'in_array:availableRoles', // Validates all items against $availableRoles
+    ];
+
 
     /**
-     * Handle the updated search event and reset the pagination.
+     * Assign roles to a user by loading the user's current roles, defining available roles,
+     * and pre-selecting already assigned roles for user role management.
+     *
+     * @param mixed $user_id The ID of the user whose roles are being managed.
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the user with the specified ID is not found.
+     */
+    #[NoReturn] public function assignRolesToUser(mixed $user_id): void
+    {
+        $user = User::with('roles')->findOrFail($user_id);
+
+        $this->user = [
+            'id' => $user->id ?? 'No ID',
+            'name' => $user->name ?? 'No Name',
+            'roles' => $user->roles ? $user->roles->pluck('name')->toArray() : [],
+        ];
+
+        // Load all available roles (hardcoded or fetched from a Role model)
+        $this->availableRoles = ['admin', 'editor', 'moderator', 'user'];
+
+        // Pre-select roles already assigned to the user
+        $this->selectedRoles = $this->user['roles'] ?? [];
+
+        $this->showUserRolesModal = true;
+
+        // Debugging:
+        logger('Modal state:', ['showUserRolesModal' => $this->showUserRolesModal]);
+
+    }
+
+    /**
+     * Validate and save the selected roles for the user, then update the state and display a success notification.
+     *
+     * - Validates the selected roles against an array of available roles.
+     * - Re-fetches the user model by ID and updates their roles using Spatie's `syncRoles` method.
+     * - Resets modal visibility and related state properties after successful save.
+     * - Optionally triggers a success notification for confirmation.
      *
      * @return void
      */
-    public function updatedSearch(): void
+    public function saveRoles(): void
     {
-        $this->resetPage();
-    }
+        $this->validate([
+            'selectedRoles' => 'array',
+            'selectedRoles.*' => 'in:' . implode(',', $this->availableRoles),
+        ]);
 
-    public function sort($column): void
-    {
-        if ($this->sortBy === $column) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $column;
-            $this->sortDirection = 'asc';
-        }
-    }
+        // Re-fetch the user model
+        $user = User::findOrFail($this->user['id']);
+        $user->syncRoles($this->selectedRoles); // Spatie's method to sync roles
 
-    /**
-     * Apply search filters to the provided query based on the current search term.
-     *
-     * @param mixed $query
-     *
-     * @return mixed
-     */
-    protected function search(mixed $query): mixed
-    {
-        return $this->search === ''
-            ? $query
-            : $query
-                ->where('email', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%');
+        // Close modal and reset state
+        $this->showUserRolesModal = false;
+        $this->user = [];
+        $this->selectedRoles = [];
+
+        // Optional: Add confirmation notification
+        Flux::toast(
+            heading: 'Success',
+            text: 'User roles updated successfully.',
+            variant: 'success',
+        );
+
     }
 
 
     /**
-     * Deletes a user from the system.
+     * Delete a user based on the provided user ID.
      *
-     * @param int|string $userId
+     * @param int|string $userId The ID of the user to be deleted.
      *
      * @return void
      */
-    protected function deleteUser(int|string $userId): void
+    public function deleteUser(int|string $userId): void
     {
         $user = User::findOrFail($userId);
+
+        $this->authorize('delete', $user);
+
         $user->delete();
 
         Flux::toast(
@@ -79,24 +129,54 @@ new class extends Component {
         );
     }
 
-    #[computed]
+    /**
+     * Apply search filters to a query.
+     *
+     * @param $query
+     * @return mixed
+     */
+    protected function applySearchFilters($query): mixed
+    {
+        if (empty($this->search)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) {
+            $q->where('email', 'like', '%' . $this->search . '%')
+                ->orWhere('name', 'like', '%' . $this->search . '%')
+                ->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') like ?", [
+                    '%' . $this->search . '%',
+                ]);
+        });
+    }
+
+    /**
+     * Retrieve the list of users with their associated roles, applying search, sorting, and pagination.
+     *
+     * @return array
+     */
     public function with(): array
     {
-        $query = User::query();
+        $query = User::query()->with('roles:name');
 
         // Apply search and order
-        $filtered = $this->search($query);
+        $filtered = $this->applySearchFilters($query);
 
-        $sorted = $filtered->orderBy($this->sortBy, $this->sortDirection);
+        // Apply sorting filter if applicable
+        $query = $this->applySorting($query);
 
         // Paginate the data
-        $paginated = $sorted->paginate(10);
+        $paginated = $query->paginate(10);
 
-        return ['users' => $paginated];
+        return [
+            'users' => $paginated,
+        ];
+
 
     }
 }; ?>
 
+    <!--blade view-->
 <div>
     <div>
         <div class="relative mb-6 w-full">
@@ -114,70 +194,100 @@ new class extends Component {
         </div>
     </div>
 
+    <x-search-and-sort
+        :search="$search"
+        :sortBy="$sortBy"
+        :sortDirection="$sortDirection"
+    />
+
     <flux:separator variant="subtle"/>
 
     <flux:table :paginate="$users">
-        <flux:table.columns>
-            <flux:table.column>Affiliation</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">
-                Name
-            </flux:table.column>
-            <flux:table.column>Email</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'community'" :direction="$sortDirection" wire:click="sort('community')">Community</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'membership'" :direction="$sortDirection" wire:click="sort('membership')">Membership</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection" wire:click="sort('created_at')">Registered At</flux:table.column>
-            <flux:table.column>Actions</flux:table.column>
-        </flux:table.columns>
+        @if ($users->count() > 0)
+            <flux:table.columns>
+                <flux:table.column>Affiliation</flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection"
+                                   wire:click="sort('name')">
+                    Name
+                </flux:table.column>
+                <flux:table.column>Email</flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'community'" :direction="$sortDirection"
+                                   wire:click="sort('community')">Community
+                </flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'membership'" :direction="$sortDirection"
+                                   wire:click="sort('membership')">Membership
+                </flux:table.column>
+                <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection"
+                                   wire:click="sort('created_at')">Authorised At
+                </flux:table.column>
+                <flux:table.column>Roles</flux:table.column>
+                <flux:table.column>Actions</flux:table.column>
+            </flux:table.columns>
+        @endif
 
         <flux:table.rows>
             @forelse ($users as $user)
-                <flux:table.row :key="$user->id">
+                <flux:table.row :key="$user['id']">
                     <flux:table.cell class="flex items-center gap-3">
 
                         <flux:dropdown hover="true" position="bottom center">
-                            <flux:avatar as="button" size="sm">{{ $user->initials() ?? 'N/A' }}</flux:avatar>
+                            <flux:avatar icon="eye" as="button" size="sm"></flux:avatar>
 
                             <flux:popover class="relative max-w-[15rem]">
 
-                                <flux:heading class="mt-2">{{ $user->name ?? 'N/A' }}</flux:heading>
+                                <flux:heading class="mt-2">{{ $user['name'] ?? 'N/A' }}</flux:heading>
 
                                 <flux:separator variant="subtle" class="mt-2"></flux:separator>
 
                                 <flux:text class="mt-3">
-                                    {{ $user->affiliation ?? 'N/A' }}
+                                    {{ $user['affiliation'] ?? 'N/A' }}
                                 </flux:text>
 
                             </flux:popover>
                         </flux:dropdown>
                     </flux:table.cell>
 
-                    <flux:table.cell variant="strong">{{ $user->name ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell variant="strong">{{ $user['name'] ?? 'N/A' }}</flux:table.cell>
 
-                    <flux:table.cell>{{ $user->email ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell>{{ $user['email'] ?? 'N/A' }}</flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $user->community->variant() ?? 'N/A' }}">{{ $user->community }}</flux:badge>
+                                    color="{{ $user['community']->variant() ?? 'N/A' }}">{{ $user['community'] }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $user->membership->variant() ?? 'N/A' }}">{{ $user->membership }}</flux:badge>
+                                    color="{{ $user['membership']->variant() ?? 'N/A' }}">{{ $user['membership'] }}</flux:badge>
                     </flux:table.cell>
 
-                    <flux:table.cell>{{ $user->created_at->format('d M Y, g:i A') ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell>{{ $user['created_at']->format('d M Y, g:i A') ?? 'N/A' }}</flux:table.cell>
 
+                    <flux:table.cell>
+                        @foreach ($user->roles as $role)
+                            <flux:badge size="sm"
+                                        color="{{ $roleColors[$role->name] }}">{{ ucfirst($role->name) }}</flux:badge>
+                        @endforeach
+                    </flux:table.cell>
+
+                    <!--actions-->
                     <flux:table.cell>
                         <flux:dropdown position="bottom" align="end" offset="-15">
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
-                                <flux:menu.item icon="shield-check"
-                                                wire:click="approveRegistrant({{ $user->id }})">Roles
-                                </flux:menu.item>
-                                <flux:menu.item icon="user-minus" wire:click="deleteUser({{ $user->id }})">
-                                    Delete
-                                </flux:menu.item>
+                                @can('user-update')
+                                    <flux:menu.item icon="shield-check"
+                                                    wire:click="assignRolesToUser({{ $user['id'] }})">Roles
+                                    </flux:menu.item>
+                                @endcan
+
+                                @can('user-destroy')
+                                    <flux:menu.item icon="user-minus" wire:click="deleteUser({{ $user['id'] }})"
+                                                    wire:confirm="Are you sure you want to delete this user?">
+                                        Delete
+                                    </flux:menu.item>
+                                @endcan
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -188,6 +298,28 @@ new class extends Component {
                 </div>
             @endforelse
         </flux:table.rows>
+
+        <!--roles modal-->
+        <flux:modal wire:model.self="showUserRolesModal" title="Assign Roles" size="lg" class="max-w-sm w-auto">
+            <form wire:submit.prevent="saveRoles">
+
+                <div class="grid grid-cols-2 items-center justify-between gap-4 mt-5">
+                    @foreach ($availableRoles as $role)
+                        <label class="block">
+                            <input type="checkbox" wire:model="selectedRoles" value="{{ $role }}"/>
+                            <span class="ml-2">{{ ucfirst($role) }}</span>
+                        </label>
+                    @endforeach
+
+                </div>
+                <div class="flex w-full items-end justify-end gap-4 mt-4">
+                    <flux:button type="button" variant="primary" wire:click="showUserRolesModal = false">Cancel
+                    </flux:button>
+                    <flux:button type="submit" variant="danger" class="mt-4">Save</flux:button>
+                </div>
+
+            </form>
+        </flux:modal>
     </flux:table>
 
 </div>
