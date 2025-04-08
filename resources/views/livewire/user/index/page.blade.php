@@ -50,24 +50,25 @@ new class extends Component {
      */
     #[NoReturn] public function assignRolesToUser(mixed $user_id): void
     {
-        $user = User::with('roles')->findOrFail($user_id);
+        if ($user->can('user-update')) {
+            $user = User::with('roles')->findOrFail($user_id);
 
-        $this->user = [
-            'id' => $user->id ?? 'No ID',
-            'name' => $user->name ?? 'No Name',
-            'roles' => $user->roles ? $user->roles->pluck('name')->toArray() : [],
-        ];
+            $this->user = [
+                'id' => $user->id ?? 'No ID',
+                'name' => $user->name ?? 'No Name',
+                'roles' => $user->roles ? $user->roles->pluck('name')->toArray() : [],
+            ];
 
-        // Load all available roles (hardcoded or fetched from a Role model)
-        $this->availableRoles = ['admin', 'editor', 'moderator', 'user'];
+            // Load all available roles (hardcoded or fetched from a Role model)
+            $this->availableRoles = ['admin', 'editor', 'moderator', 'user'];
 
-        // Pre-select roles already assigned to the user
-        $this->selectedRoles = $this->user['roles'] ?? [];
+            // Pre-select roles already assigned to the user
+            $this->selectedRoles = $this->user['roles'] ?? [];
 
-        $this->showUserRolesModal = true;
-
-        // Debugging:
-        logger('Modal state:', ['showUserRolesModal' => $this->showUserRolesModal]);
+            $this->showUserRolesModal = true;
+        } else {
+            abort(403, 'You are not authorised to assign roles to users!');
+        }
 
     }
 
@@ -83,26 +84,31 @@ new class extends Component {
      */
     public function saveRoles(): void
     {
-        $this->validate([
-            'selectedRoles' => 'array',
-            'selectedRoles.*' => 'in:' . implode(',', $this->availableRoles),
-        ]);
+        if ($user->can('role-update')) {
+            $this->validate([
+                'selectedRoles' => 'array',
+                'selectedRoles.*' => 'in:' . implode(',', $this->availableRoles),
+            ]);
 
-        // Re-fetch the user model
-        $user = User::findOrFail($this->user['id']);
-        $user->syncRoles($this->selectedRoles); // Spatie's method to sync roles
+            // Re-fetch the user model
+            $user = User::findOrFail($this->user['id']);
+            $user->syncRoles($this->selectedRoles); // Spatie's method to sync roles
 
-        // Close modal and reset state
-        $this->showUserRolesModal = false;
-        $this->user = [];
-        $this->selectedRoles = [];
+            // Close modal and reset state
+            $this->showUserRolesModal = false;
+            $this->user = [];
+            $this->selectedRoles = [];
 
-        // Optional: Add confirmation notification
-        Flux::toast(
-            heading: 'Success',
-            text: 'User roles updated successfully.',
-            variant: 'success',
-        );
+            // Optional: Add confirmation notification
+            Flux::toast(
+                heading: 'Success',
+                text: 'User roles updated successfully.',
+                variant: 'success',
+            );
+        } else {
+            abort(403, 'You are not authorised to update user roles!');
+        }
+
 
     }
 
@@ -116,17 +122,22 @@ new class extends Component {
      */
     public function deleteUser(int|string $userId): void
     {
-        $user = User::findOrFail($userId);
+        if ($user->can('user-destroy')) {
+            $user = User::findOrFail($userId);
 
-        $this->authorize('delete', $user);
+            $this->authorize('delete', $user);
 
-        $user->delete();
+            $user->delete();
 
-        Flux::toast(
-            heading: 'User Deleted.',
-            text: 'The user has been deleted successfully.',
-            variant: 'success',
-        );
+            Flux::toast(
+                heading: 'User Deleted.',
+                text: 'The user has been deleted successfully.',
+                variant: 'success',
+            );
+        } else {
+            abort(403, 'You are not authorised to delete users!');
+        }
+
     }
 
     /**

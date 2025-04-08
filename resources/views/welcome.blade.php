@@ -19,7 +19,7 @@
                 <flux-container class="flex-initial">
                     <img
                         class="w-full h-auto max-w-none rounded-t-lg translate-y-0 starting:translate-y-6 object-cover starting:opacity-0 opacity-100 transition-all duration-750"
-                        src="{{ Storage::disk('s3')->url('home01.png') }}" alt=""/>
+                        src="{{ Storage::disk('s3')->url('home/home01.png') }}" alt=""/>
                 </flux-container>
 
                 <flux-container class="flex-auto">
@@ -57,7 +57,7 @@
                 <flux-container class="flex-initial">
                     <img
                         class="h-auto w-full max-w-none rounded-t-lg translate-y-0 starting:translate-y-6 object-cover starting:opacity-0 opacity-100 transition-all duration-750"
-                        src="{{ Storage::disk('s3')->url('home02.png') }}" alt=""/>
+                        src="{{ Storage::disk('s3')->url('home/home02.png') }}" alt=""/>
                 </flux-container>
 
                 <flux-container class="flex-auto">
@@ -106,7 +106,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ Storage::disk('s3')->url('history.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('home/history.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -138,7 +138,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ Storage::disk('s3')->url('chapel.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('home/chapel.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -171,7 +171,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ Storage::disk('s3')->url('memorial.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('home/memorial.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>
@@ -203,7 +203,7 @@
 
                     <!--image-->
                     <flux:container class="px-0!">
-                        <img src="{{ Storage::disk('s3')->url('museum.png') }}"
+                        <img src="{{ Storage::disk('s3')->url('home/museum.png') }}"
                              class="h-auto w-full max-w-none translate-y-0 starting:translate-y-6 rounded-t-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750"
                              alt="Image 1">
                     </flux:container>

@@ -11,7 +11,7 @@
         class="flex px-0! gap-10 flex-col mx-auto max-w-7xl starting:opacity-0 opacity-100 transition-opacity duration-750 md:justify-start">
         <flux:container class="flex flex-col items-start mb-6 not-italic">
             <flex:container class="mb-8 inline-flex items-start mr-3 text-sm text-gray-900 dark:text-white">
-                <img class="mr-4 w-16 h-16 rounded-full" src="{{ Storage::disk('s3')->url('about-img01.png') }}"
+                <img class="mr-4 w-16 h-16 rounded-full" src="{{ Storage::disk('s3')->url('about/about-img01.png') }}"
                      alt="Ewan Carmichael">
                 <flex:container>
                     <flux:heading size="lg" level="2">Ewan B Carmichael CBE</flux:heading>

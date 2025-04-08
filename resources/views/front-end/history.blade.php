@@ -9,7 +9,7 @@
         class="flex w-full flex-col gap-10 items-start starting:opacity-0 opacity-100 transition-opacity duration-750 md:grow">
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history02.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history02.png') }}"
                      alt="Dental extraction tool from the 18th century"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Dental extraction tool from the 18th century"/>
@@ -38,7 +38,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history01.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history01.png') }}"
                      alt="Dental Officers at Woolwich 1930."
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Dental Officers at Woolwich 1930."/>
@@ -64,7 +64,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history03.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history03.png') }}"
                      alt="Field dentistry eastern desert 1943."
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Field dentistry eastern desert 1943."/>
@@ -87,7 +87,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history04.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history04.png') }}"
                      alt="Field dental centre, Korea 1951."
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Field dental centre, Korea 1951."/>
@@ -107,7 +107,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history06.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history06.png') }}"
                      alt="Forward Operating Base in Afghanistan."
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Forward Operating Base in Afghanistan."/>
@@ -131,7 +131,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('history05.png') }}"
+                <img src="{{ Storage::disk('s3')->url('history/history05.png') }}"
                      alt="Dentistry in COVID-19 PPE."
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="Dentistry in COVID-19 PPE."/>
@@ -160,7 +160,7 @@
             <flux:container class="flex flex-col p-0!">
                 <flux:container class="text-center text-gray-500 dark:text-gray-400">
                     <img class="mx-auto mb-4 w-auto h-28 rounded-full"
-                         src="{{ Storage::disk('s3')->url('ADC.png') }}" alt="ADC badge"
+                         src="{{ Storage::disk('s3')->url('history/ADC.png') }}" alt="ADC badge"
                          aria-describedby="ADC badge">
                     <flux:heading size="lg" level="3">
                         ADC
@@ -177,7 +177,7 @@
             <flux:container class="flex flex-col p-0!">
                 <flux:container class="text-center text-gray-500 dark:text-gray-400">
                     <img class="mx-auto mb-4 w-auto h-28 rounded-full"
-                         src="{{ Storage::disk('s3')->url('RADC.png') }}" alt="RADC badge"
+                         src="{{ Storage::disk('s3')->url('history/RADC.png') }}" alt="RADC badge"
                          aria-describedby="RADC badge">
                     <flux:heading size="lg" level="3">
                         RADC
@@ -197,7 +197,7 @@
             <flux:container class="flex flex-col p-0!">
                 <flux:container class="text-center text-gray-500 dark:text-gray-400">
                     <img class="mx-auto mb-4 w-auto h-28 rounded-full"
-                         src="{{ Storage::disk('s3')->url('RAMS.png') }}" alt="RAMS badge"
+                         src="{{ Storage::disk('s3')->url('history/RAMS.png') }}" alt="RAMS badge"
                          aria-describedby="RAMS badge">
                     <flux:heading size="lg" level="3">
                         RAMS

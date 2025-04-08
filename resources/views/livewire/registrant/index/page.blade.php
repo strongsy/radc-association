@@ -77,14 +77,19 @@ new class extends Component {
      */
     private function createUserFromRegistrant(array $validatedData, string $temporaryPassword): void
     {
-        $validatedData['password'] = Hash::make($temporaryPassword);
+        if ($user->can('user-create')) {
+            $validatedData['password'] = Hash::make($temporaryPassword);
 
-        $user = User::create($validatedData);
+            $user = User::create($validatedData);
 
-        $user->assignRole('user');
+            $user->assignRole('user');
 
-        RegistrantApprovedJob::dispatch($validatedData);
-        $user->sendEmailVerificationNotification();
+            RegistrantApprovedJob::dispatch($validatedData);
+            $user->sendEmailVerificationNotification();
+        } else {
+            abort(403, 'You are not authorised to create users!');
+        }
+
     }
 
     /**
@@ -96,17 +101,22 @@ new class extends Component {
      */
     public function deleteRegistrant(int|string $registrantId): void
     {
-        $registrant = Registrant::findOrFail($registrantId);
+        if ($user->can('user-destroy')) {
+            $registrant = Registrant::findOrFail($registrantId);
 
-        $this->authorize('delete', $registrant);
+            $this->authorize('delete', $registrant);
 
-        $registrant->delete();
+            $registrant->delete();
 
-        Flux::toast(
-            heading: 'Registrant Deleted.',
-            text: 'The registrant has been deleted successfully.',
-            variant: 'success',
-        );
+            Flux::toast(
+                heading: 'Registrant Deleted.',
+                text: 'The registrant has been deleted successfully.',
+                variant: 'success',
+            );
+        } else {
+            abort(403, 'You are not authorised to delete registrants!');
+        }
+
     }
 
     /**
@@ -247,7 +257,8 @@ new class extends Component {
                                                 wire:confirm="Are you sure that you want to authorise this registrant to access the site?">
                                     Approve
                                 </flux:menu.item>
-                                <flux:menu.item icon="user-minus" wire:click="deleteRegistrant({{ $registrant->id ?? 'N/A' }})"
+                                <flux:menu.item icon="user-minus"
+                                                wire:click="deleteRegistrant({{ $registrant->id ?? 'N/A' }})"
                                                 wire:confirm="Are you sure that you want to delete this registrant?">
                                     Delete
                                 </flux:menu.item>

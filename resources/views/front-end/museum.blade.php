@@ -9,7 +9,7 @@
         class="flex w-full flex-col gap-10 items-start starting:opacity-0 opacity-100 transition-opacity duration-750 md:grow">
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('museum02.png') }}"
+                <img src="{{ Storage::disk('s3')->url('museum/museum02.png') }}"
                      alt="The uniform of Capt Julius Green"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="The uniform of Capt Julius Green"/>
@@ -56,7 +56,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('museum01.png') }}"
+                <img src="{{ Storage::disk('s3')->url('museum/museum01.png') }}"
                      alt="The musketeer diorama"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="The musketeer diorama"/>
@@ -85,7 +85,7 @@
 
         <flux:container class="flex px-0! w-full flex-col items-start">
             <flux:text class="leading-relaxed">
-                <img src="{{ Storage::disk('s3')->url('museum03.png') }}"
+                <img src="{{ Storage::disk('s3')->url('museum/museum03.png') }}"
                      alt="The bamboo dental chair"
                      class="mb-5 me-8 h-auto w-full sm:w-72 lg:w-96 max-w-none translate-y-0 starting:translate-y-6 rounded-lg object-cover starting:opacity-0 opacity-100 transition-all duration-750 border border-gray-200 float-start dark:border-gray-700"
                      aria-describedby="The bamboo dental chair"/>
