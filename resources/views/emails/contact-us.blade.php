@@ -1,11 +1,14 @@
 @component('mail::message')
-# Introduction
+# Hello {{ $name }},
 
-The body of your message.
+Thank you for getting in touch with us. Here's a copy of your message:
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+## Your Message:
+{{ $message }}
+
+We appreciate you reaching out to us and will respond to your query as soon as possible.
+
+Best regards,
 
 Thanks,<br>
 {{ config('app.name') }}

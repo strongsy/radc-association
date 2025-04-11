@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\MailReplyJob;
 use App\Jobs\RegistrantApprovedJob;
 use App\Models\Registrant;
 use App\Models\Mail;
@@ -19,9 +20,15 @@ new class extends Component {
 
     public bool $showReplyFormId = false;
 
-    public string $replySubject = '';
+    public string $name = '';
 
-    public string $replyContent = '';
+    public string $email = '';
+
+    public string $subject = '';
+
+    public string $message = '';
+
+    public string $parsedMessage = '';
 
     public string $mailId = '';
 
@@ -37,11 +44,32 @@ new class extends Component {
      * */
     public function showReplyModal($mailId): void
     {
-
         $this->mailId = $mailId;
+
+        $mailUser = Mail::with('replies.user')->findOrFail($mailId);
+        $this->name = $mailUser->name;
+        $this->email = $mailUser->email;
+        $this->subject = $mailUser->subject;
 
         // Set the currently selected mail for reply
         $this->showReplyFormId = true;
+    }
+
+
+    /**
+     * Cancel and reset the reply modal form.
+     *
+     * Resets all fields related to the reply form and closes the reply modal.
+     *
+     * @return void
+     */
+    public function cancelReplyModal(): void
+    {
+        $this->showReplyFormId = false;
+        $this->name = '';
+        $this->email = '';
+        $this->subject = '';
+        $this->message = '';
     }
 
     /**
@@ -51,29 +79,39 @@ new class extends Component {
      */
     public function sendReply(): void
     {
-        if ($user->can('mail-reply')) {
+        if (Auth::user() && Auth::user()->can('mail-reply')) {
             // Validate reply content
             $validated = $this->validate([
-                'replySubject' => ['required', 'string', 'min:5', 'max:250'],
-                'replyContent' => ['required', 'string', 'min:10', 'max:1000'],
+                'name' => ['required'],
+                'email' => ['required'],
+                'subject' => ['required', 'string', 'min:5', 'max:250'],
+                'message' => ['required', 'string', 'min:10', 'max:1000'],
             ]);
+
             // Create a new reply
             Reply::create([
                 'mail_id' => $this->mailId,
-                'user_id' => auth()->id(), // Ensure the user is logged in
-                'subject' => $this->replySubject,
-                'message' => $this->replyContent,
+                'user_id' => auth()->id(),
+                'subject' => $this->subject,
+                'message' => $this->message,
             ]);
+
+            // Send email
+            MailReplyJob::dispatch($validated);
+
             //toast message
             Flux::toast(
                 'Reply Sent.',
                 'Your reply has been sent to the originator.',
                 'success',
             );
+
             // Reset state
             $this->showReplyFormId = false;
-            $this->replySubject = '';
-            $this->replyContent = '';
+            $this->name = '';
+            $this->email = '';
+            $this->subject = '';
+            $this->message = '';
         } else {
             abort(403, 'You are not authorised to reply to emails!');
         }
@@ -89,7 +127,7 @@ new class extends Component {
      */
     public function archiveMail(int $mailId): void
     {
-        if ($user->can('mail-destroy')) {
+        if (Auth::user() && Auth::user()->can('mail-destroy')) {
             $mail = Mail::findOrFail($mailId);
 
             $this->authorize('delete', $mail);
@@ -224,15 +262,19 @@ new class extends Component {
                             <flux:text
                                 size="sm">{{ $mail->created_at->format('d M Y, g:i A') ?? 'N/A' }}</flux:text>
                             <flux:heading size="sm" level="3">Subject: {{ $mail->subject ?? 'N/A' }}</flux:heading>
-                            {{ $mail->message ?? 'N/A' }}
+                            <flux:text class="prose">
+                                <x-markdown>
+                                    {!! $mail->message !!}
+                                </x-markdown>
+                            </flux:text>
                         </flux:card>
                     </flux:table.cell>
 
-                    <flux:table.cell class="max-w-md text-wrap">
+                    <flux:table.cell class="max-w-md text-wrap flex-col space-y-3">
 
                         @if($mail->replies->count() > 0)
-                            <flux:card class="flex flex-col gap-2">
-                                @foreach($mail->replies as $reply)
+                            @foreach($mail->replies as $reply)
+                                <flux:card class="flex flex-col gap-2">
                                     <flux:heading size="sm" level="3">
                                         From: {{ $reply->user->name ?? 'N/A' }}</flux:heading>
                                     <flux:heading size="sm" level="3">
@@ -241,9 +283,14 @@ new class extends Component {
                                         size="sm">{{ $reply->created_at->format('d M Y, g:i A') ?? 'N/A' }}</flux:text>
                                     <flux:heading size="sm" level="3">
                                         Subject: {{ $reply->subject ?? 'N/A' }}</flux:heading>
-                                    <flux:text>{{ $reply->message ?? 'N/A' }}</flux:text>
-                                @endforeach
-                            </flux:card>
+                                    <flux:text>
+                                        <x-markdown>
+                                            {!! $reply->message !!}
+                                        </x-markdown>
+                                    </flux:text>
+
+                                </flux:card>
+                            @endforeach
                         @else
                             <flux:badge color="red" variant="ghost">No Replies</flux:badge>
                         @endif
@@ -283,23 +330,42 @@ new class extends Component {
 
         <!--reply modal-->
         <flux:modal wire:model.self="showReplyFormId" title="Message" size="lg" class="max-w-lg w-auto">
-            <form wire:submit.prevent="sendReply">
-
+            <form wire:submit.prevent="sendReply()">
+                @csrf
                 <div class="flex flex-col w-full mt-10 gap-5">
-                    <flux:heading size="sm" level="3">To: {{ $mail->email ?? 'N/A' }}</flux:heading>
                     <flux:input
-                        wire:model="replySubject"
-                        name="replySubject"
-                        label="Reply Subject"
+                        wire:model="name"
+                        name="name"
+                        label="To"
+                        disabled="true"
                         required="true"
-                        value="Re: {{ $mail->subject ?? 'N/A'}}"
+                        value="{{ $mail->name ?? 'N/A' }}"
                         placeholder="Enter your reply subject here..."
                         class="w-full h-full"/>
 
-                    <flux:textarea
-                        wire:model="replyContent"
-                        name="replyContent"
-                        label="Reply Content"
+                    <flux:input
+                        wire:model="email"
+                        name="email"
+                        label="Email"
+                        disabled="true"
+                        required="true"
+                        value="{{ $mail->user->email ?? 'N/A'}}"
+                        placeholder="Enter your reply subject here..."
+                        class="w-full h-full"/>
+
+                    <flux:input
+                        wire:model="subject"
+                        name="subject"
+                        label="Subject"
+                        required="true"
+                        value="{{ $mail->subject ?? 'N/A'}}"
+                        placeholder="Enter your reply subject here..."
+                        class="w-full h-full"/>
+
+                    <flux:editor
+                        wire:model="message"
+                        name="message"
+                        label="Content"
                         rows="20"
                         required="true"
                         placeholder="Enter your reply here..."
@@ -307,7 +373,7 @@ new class extends Component {
 
                 </div>
                 <div class="flex w-full items-end justify-end gap-4 mt-4">
-                    <flux:button type="button" variant="primary" wire:click="showReplyFormId = false">Cancel
+                    <flux:button type="button" variant="primary" wire:click="cancelReplyModal()">Cancel
                     </flux:button>
                     <flux:button type="submit" variant="danger" class="mt-4">Send</flux:button>
                 </div>
@@ -315,7 +381,7 @@ new class extends Component {
         </flux:modal>
 
         <!--show replies modal-->
-        <flux:modal wire:model.self="showRepliesModal" title="Replies" size="lg" class="max-w-lg w-auto">
+        {{--<flux:modal wire:model.self="showRepliesModal" title="Replies" size="lg" class="max-w-lg w-auto">
 
             <div class="flex flex-col w-full mt-10 gap-5">
                 @foreach($replies as $reply)
@@ -324,9 +390,9 @@ new class extends Component {
                 @endforeach
             </div>
             <div class="flex w-full items-end justify-end gap-4 mt-4">
-                <flux:button type="button" variant="primary" wire:click="showReplies = false">Cancel
+                <flux:button type="button" variant="primary" wire:click="showReplies = true">Cancel
                 </flux:button>
             </div>
-        </flux:modal>
+        </flux:modal>--}}
     </flux:table>
 </div>

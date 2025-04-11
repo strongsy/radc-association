@@ -77,7 +77,7 @@ new class extends Component {
      */
     private function createUserFromRegistrant(array $validatedData, string $temporaryPassword): void
     {
-        if ($user->can('user-create')) {
+        if (Auth::user() && Auth::user()->can('user-create')) {
             $validatedData['password'] = Hash::make($temporaryPassword);
 
             $user = User::create($validatedData);

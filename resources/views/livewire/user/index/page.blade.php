@@ -122,7 +122,7 @@ new class extends Component {
      */
     public function deleteUser(int|string $userId): void
     {
-        if ($user->can('user-destroy')) {
+        if (Auth::user() && Auth::user()->can('user-destroy')) {
             $user = User::findOrFail($userId);
 
             $this->authorize('delete', $user);

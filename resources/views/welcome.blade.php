@@ -124,7 +124,7 @@
                     <!--button-->
                     <flux:container class="p-3! flex-1 grow-0">
                         <a href="{{ route('history') }}">
-                            <flux:button variant="danger" icon-trailing="arrow-right"
+                            <flux:button variant="filled" icon-trailing="arrow-right"
                                          aria-label="Read more about the corps history">
                                 Read more
                             </flux:button>
@@ -157,7 +157,7 @@
                     <!--button-->
                     <flux:container class="p-3! flex-1 grow-0">
                         <a href="{{ route('chapel') }}">
-                            <flux:button variant="danger" icon-trailing="arrow-right"
+                            <flux:button variant="filled" icon-trailing="arrow-right"
                                          aria-label="Read more about the corps chapel">
                                 Read more
                             </flux:button>
@@ -189,7 +189,7 @@
                     <!--button-->
                     <flux:container class="p-3! flex-1 grow-0">
                         <a href="{{ route('memorial') }}">
-                            <flux:button variant="danger" icon-trailing="arrow-right"
+                            <flux:button variant="filled" icon-trailing="arrow-right"
                                          aria-label="Read more about the corps memorial">
                                 Read more
                             </flux:button>
@@ -221,7 +221,7 @@
                     <!--button-->
                     <flux:container class="p-3! flex-1 grow-0">
                         <a href="{{ route('museum') }}">
-                            <flux:button variant="danger" icon-trailing="arrow-right"
+                            <flux:button variant="filled" icon-trailing="arrow-right"
                                          aria-label="Read more about the museum of military medicine">
                                 Read more
                             </flux:button>

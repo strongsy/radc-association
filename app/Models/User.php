@@ -73,6 +73,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->implode('');
     }
 
+    public function getFirstName(): string
+    {
+        return explode(' ', $this->name)[0];
+    }
+
     /**
      * Relationships
      */

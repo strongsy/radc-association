@@ -39,7 +39,7 @@ class ContactUsEmailJob implements ShouldQueue
         Mail::to($this->data['email'])->send(new ContactUsMail($this->data));
         //Send email to admin
         foreach ($this->admin as $adminEmail) {
-            Mail::to($adminEmail)->send(new ContactUsAdminMail(),($this->data));
+            Mail::to($adminEmail)->send(new ContactUsAdminMail(($this->data)));
         }
     }
 }

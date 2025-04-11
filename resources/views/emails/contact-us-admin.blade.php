@@ -1,10 +1,21 @@
 @component('mail::message')
-# Introduction
+# New Contact Form Submission
 
-The body of your message.
+You’ve received a new contact form submission:
 
-@component('mail::button', ['url' => ''])
-Button Text
+## Name:
+{{ $name }}
+
+## Email:
+{{ $email }}
+
+## Message:
+{{ $message }}
+
+Please respond to this inquiry within 72 hours.
+
+@component('mail::button', ['url' => config('app.url') . '/mail'])
+Emails
 @endcomponent
 
 Thanks,<br>

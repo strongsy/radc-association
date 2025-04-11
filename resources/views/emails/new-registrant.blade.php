@@ -1,10 +1,27 @@
 @component('mail::message')
-# Introduction
+# New Registration Form Submission
 
-The body of your message.
+You’ve received a new registration form submission:
 
-@component('mail::button', ['url' => ''])
-Button Text
+## Name:
+{{ $name }}
+
+## Email:
+{{ $email }}
+
+## Community:
+{{ $community }}
+
+## Membership:
+{{ $membership }}
+
+## Affiliation:
+{{ $affiliation }}
+
+Please action this registration request within 72 hours.
+
+@component('mail::button', ['url' => config('app.url') . '/registrants'])
+Registrants List
 @endcomponent
 
 Thanks,<br>

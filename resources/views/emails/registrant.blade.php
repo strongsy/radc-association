@@ -1,11 +1,11 @@
 @component('mail::message')
-# Introduction
+# Hello {{ $name }},
 
-The body of your message.
+Thank you for registering with us.
 
-@component('mail::button', ['url' => ''])
-Button Text
-@endcomponent
+If you meet the requirement for registration, you will be notified by email when your account is activated.
+
+We will respond to your registration request as soon as possible.
 
 Thanks,<br>
 {{ config('app.name') }}

@@ -24,7 +24,7 @@
         {{-- Render sort badge if applicable --}}
         @if($sortBy)
             <flux:badge color="rose" variant="ghost">
-                <flux:text>{{ ucfirst($sortBy) ?? 'None' }} ({{ ucfirst($sortDirection) ?? 'None' }})</flux:text>
+                <flux:text>{{ ucfirst($sortBy) ?? 'asc' }} ({{ ucfirst($sortDirection) ?? 'None' }})</flux:text>
                 <flux:button
                     size="sm"
                     type="button"
