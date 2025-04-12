@@ -50,7 +50,7 @@ new class extends Component {
      */
     #[NoReturn] public function assignRolesToUser(mixed $user_id): void
     {
-        if ($user->can('user-update')) {
+        if (Auth::user() && Auth::user()->can('user-update')) {
             $user = User::with('roles')->findOrFail($user_id);
 
             $this->user = [
@@ -84,7 +84,7 @@ new class extends Component {
      */
     public function saveRoles(): void
     {
-        if ($user->can('role-update')) {
+        if (Auth::user() && Auth::user()->can('user-update')) {
             $this->validate([
                 'selectedRoles' => 'array',
                 'selectedRoles.*' => 'in:' . implode(',', $this->availableRoles),
@@ -154,10 +154,7 @@ new class extends Component {
 
         return $query->where(function ($q) {
             $q->where('email', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%')
-                ->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') like ?", [
-                    '%' . $this->search . '%',
-                ]);
+                ->orWhere('name', 'like', '%' . $this->search . '%');
         });
     }
 
@@ -190,7 +187,7 @@ new class extends Component {
     <!--blade view-->
 <div>
     <div>
-        <div class="relative mb-6 w-full">
+        <div class="relative mb-3 w-full">
             <flux:heading size="xl" level="1">{{ __('Users') }}</flux:heading>
             <flux:subheading size="lg" class="mb-6">{{ __('List of approved users') }}</flux:subheading>
             <flux:separator variant="subtle"/>
@@ -198,7 +195,7 @@ new class extends Component {
     </div>
 
     <!-- search field -->
-    <div class="grid grid-cols-12 items-center justify-between gap-4 mb-6">
+    <div class="grid grid-cols-12 items-center justify-between gap-4">
         <div class="grid col-span-2 items-center gap-4">
             <flux:input icon="magnifying-glass" placeholder="Search..." type="text" class="w-full"
                         wire:model.live.debounce.500ms="search"/>
@@ -238,7 +235,7 @@ new class extends Component {
 
         <flux:table.rows>
             @forelse ($users as $user)
-                <flux:table.row :key="$user['id']">
+                <flux:table.row :key="$user->id">
                     <flux:table.cell class="flex items-center gap-3">
 
                         <flux:dropdown hover="true" position="bottom center">
@@ -246,30 +243,30 @@ new class extends Component {
 
                             <flux:popover class="relative max-w-[15rem]">
 
-                                <flux:heading class="mt-2">{{ $user['name'] ?? 'N/A' }}</flux:heading>
+                                <flux:heading class="mt-2">{{ $user->name ?? 'N/A' }}</flux:heading>
 
                                 <flux:separator variant="subtle" class="mt-2"></flux:separator>
 
                                 <flux:text class="mt-3">
-                                    {{ $user['affiliation'] ?? 'N/A' }}
+                                    {{ $user->affiliation ?? 'N/A' }}
                                 </flux:text>
 
                             </flux:popover>
                         </flux:dropdown>
                     </flux:table.cell>
 
-                    <flux:table.cell variant="strong">{{ $user['name'] ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell variant="strong">{{ $user->name ?? 'N/A' }}</flux:table.cell>
 
-                    <flux:table.cell>{{ $user['email'] ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell>{{ $user->email ?? 'N/A' }}</flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $user['community']->variant() ?? 'N/A' }}">{{ $user['community'] }}</flux:badge>
+                                    color="{{ $user->community->variant() ?? 'N/A' }}">{{ $user->community }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>
                         <flux:badge size="sm"
-                                    color="{{ $user['membership']->variant() ?? 'N/A' }}">{{ $user['membership'] }}</flux:badge>
+                                    color="{{ $user->membership->variant() ?? 'N/A' }}">{{ $user->membership }}</flux:badge>
                     </flux:table.cell>
 
                     <flux:table.cell>{{ $user['created_at']->format('d M Y, g:i A') ?? 'N/A' }}</flux:table.cell>
@@ -277,7 +274,7 @@ new class extends Component {
                     <flux:table.cell>
                         @foreach ($user->roles as $role)
                             <flux:badge size="sm"
-                                        color="{{ $roleColors[$role->name] }}">{{ ucfirst($role->name) }}</flux:badge>
+                                        color="{{ $roleColors[$role->name] }}">{{ ucfirst($role->name) ?? 'N/A' }}</flux:badge>
                         @endforeach
                     </flux:table.cell>
 
@@ -289,13 +286,13 @@ new class extends Component {
                             <flux:menu>
                                 @can('user-update')
                                     <flux:menu.item icon="shield-check"
-                                                    wire:click="assignRolesToUser({{ $user['id'] }})">Roles
+                                                    wire:click="assignRolesToUser({{ $user->id ?? 'N/A' }})">Roles
                                     </flux:menu.item>
                                 @endcan
 
                                 @can('user-destroy')
-                                    <flux:menu.item icon="user-minus" wire:click="deleteUser({{ $user['id'] }})"
-                                                    wire:confirm="Are you sure you want to delete this user?">
+                                    <flux:menu.item icon="user-minus" wire:click="deleteUser({{ $user->id ?? 'N/A' }})"
+                                                    wire:confirm.prompt="Are you sure you want to delete this user?\n\nType DELETE to confirm|DELETE">
                                         Delete
                                     </flux:menu.item>
                                 @endcan
@@ -304,9 +301,9 @@ new class extends Component {
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <div class="flex justify-center items-center h-full">
-                    <flux:heading size="xl">No Users</flux:heading>
-                </div>
+                <flux:badge size="xl" color="teal" variant="subtle" class="my-3">
+                    <flux:heading size="xl">No Users Yet</flux:heading>
+                </flux:badge>
             @endforelse
         </flux:table.rows>
 
@@ -318,7 +315,7 @@ new class extends Component {
                     @foreach ($availableRoles as $role)
                         <label class="block">
                             <input type="checkbox" wire:model="selectedRoles" value="{{ $role }}"/>
-                            <span class="ml-2">{{ ucfirst($role) }}</span>
+                            <span class="ml-2">{{ ucfirst($role) ?? 'N/A' }}</span>
                         </label>
                     @endforeach
 

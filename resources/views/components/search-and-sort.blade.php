@@ -5,7 +5,7 @@
 ])
 
 <div>
-    <div class="flex space-x-2 mb-3">
+    <div class="flex space-x-2 my-3">
         {{-- Render search badge if applicable --}}
         @if($search)
             <flux:badge size="sm" color="emerald" variant="ghost">

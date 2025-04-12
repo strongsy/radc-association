@@ -176,13 +176,24 @@ new class extends Component {
         return $query->where(function ($q) {
             $q->where('email', 'like', '%' . $this->search . '%')
                 ->orWhere('name', 'like', '%' . $this->search . '%')
-                ->orWhere('message', 'like', '%' . $this->search . '%')
-                ->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') like ?", [
+                ->orWhere('message', 'like', '%' . $this->search . '%');
+
+            /*// Ensure correct database formatting logic is applied
+            if (DB::getDriverName() === 'pgsql') {
+                // PostgreSQL: Use TO_CHAR for date formatting
+                $q->orWhereRaw("TO_CHAR(created_at, 'DD Mon YYYY, HH:MI PM') LIKE ?", [
                     '%' . $this->search . '%',
-                ])
-                ->orWhereHas('replies.user', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%');
-                });
+                ]);
+            } elseif (DB::getDriverName() === 'mysql') {
+                // MySQL: Use DATE_FORMAT for date formatting
+                $q->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') LIKE ?", [
+                    '%' . $this->search . '%',
+                ]);
+            }*/
+
+            $q->orWhereHas('replies.user', function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%');
+            });
 
             if (strtolower(trim($this->search)) === 'no replies') {
                 $q->orWhereDoesntHave('replies');
@@ -196,7 +207,7 @@ new class extends Component {
      *
      * @return array
      */
-    public function with(): array
+    #[NoReturn] public function with(): array
     {
         $query = Mail::query()->with('replies.user');
 
@@ -217,7 +228,7 @@ new class extends Component {
     <!--start blade view-->
 <div>
     <div>
-        <div class="relative mb-6 w-full">
+        <div class="relative mb-3 w-full">
             <flux:heading size="xl" level="1">{{ __('Email') }}</flux:heading>
             <flux:subheading size="lg" class="mb-6">{{ __('Emails awaiting a response.') }}</flux:subheading>
             <flux:separator variant="subtle"/>
@@ -225,7 +236,7 @@ new class extends Component {
     </div>
 
     <!-- search field -->
-    <div class="grid grid-cols-12 items-center justify-between gap-4 mb-6">
+    <div class="grid grid-cols-12 items-center justify-between gap-4">
         <div class="grid col-span-2 items-center gap-4">
             <flux:input icon="magnifying-glass" placeholder="Search..." type="text" class="w-full"
                         wire:model.live.debounce.500ms="search"/>
@@ -323,7 +334,9 @@ new class extends Component {
                 </flux:table.row>
             @empty
                 <div class="flex justify-center items-center h-full">
-                    <flux:heading size="xl">No Mail Received Yet</flux:heading>
+                    <flux:badge size="xl" color="teal" variant="subtle" class="my-3">
+                        <flux:heading size="xl">No Mail Received Yet</flux:heading>
+                    </flux:badge>
                 </div>
             @endforelse
         </flux:table.rows>
