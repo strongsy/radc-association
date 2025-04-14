@@ -5,7 +5,7 @@
     $backgroundClasses = "bg-no-repeat bg-cover bg-center bg-gray-700 bg-blend-multiply";
 @endphp--}}
 
-<div class="flex w-full flex-col bg-no-repeat bg-cover bg-centerbg-blend-multiply" {{--style="{{ $backgroundStyles }}"--}}>
+<div class="flex w-full flex-col bg-no-repeat bg-zinc-50 dark:bg-zinc-900 bg-cover bg-center bg-blend-multiply" {{--style="{{ $backgroundStyles }}"--}}>
     <!--navbar-->
     <flux:container class="flex flex-row space-x-20 w-full py-3 items-center justify-between">
         <a href="{{ route('home') }}" class="ml-2 mr-5 items-center space-x-2 lg:ml-0 hidden lg:flex" wire:navigate>
