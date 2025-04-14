@@ -3,9 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-//use Database\Factories\MailFactory;
-//use Database\Factories\RegistrantFactory;
+use Database\Factories\AttendanceFactory;
+use Database\Factories\EventFactory;
+use Database\Factories\MailFactory;
+use Database\Factories\RegistrantFactory;
 use Illuminate\Database\Seeder;
+use Random\RandomException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +20,6 @@ class DatabaseSeeder extends Seeder
         // Create an instance of the RoleAndPermissionSeeder class
         $roleAndPermissionSeeder = new RoleAndPermissionSeeder();
         $roleAndPermissionSeeder->run(); // Call the run method on the instance
-
 
         /**
          * create super admin user
@@ -33,19 +35,27 @@ class DatabaseSeeder extends Seeder
             'is_blocked' => false,
         ]);
 
+        //assign super-admin to my account
         $user->assignRole('super-admin');
 
         //create registrants
-        /*RegistrantFactory::new()->count(20)->create();
+        RegistrantFactory::new()->count(20)->create();
 
         //create mail
-        MailFactory::new()->count(20)->create();
+        MailFactory::new()->count(5)->create();
 
         //create users
-        $newUser = User::factory(10)->create();
+        $newUser = User::factory(20)->create();
 
+        //loop through added users and assign user role
         foreach ($newUser as $user) {
             $user->assignRole('user');
-        }*/
+        }
+
+        //create events
+        EventFactory::new()->count(10)->create();
+
+        //create attendees
+        AttendanceFactory::new()->count(10)->create();
     }
 }

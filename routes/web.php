@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('stories', 'story.index.page')->name('story.index')->middleware('can:story-index');
     Volt::route('posts', 'post.index.page')->name('post.index')->middleware('can:post-index');
     Volt::route('events', 'event.index.page')->name('event.index')->middleware('can:event-index');
+    Volt::route('events/create', 'event.create.page')->name('event.create')->middleware('can:event-create');
     Volt::route('galleries', 'gallery.index.page')->name('gallery.index')->middleware('can:gallery-index');
 });
 

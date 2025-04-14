@@ -31,7 +31,8 @@
 
                 <flux:text class="leading-relaxed">
                     The news that our Corps was to amalgamate was announced at relatively
-                    short notice this Autumn and must, therefore, have come as a bit of a surprise. We fully recognise
+                    short notice in the
+                    Autumn of 2024 and must, therefore, have come as a bit of a surprise. We fully recognise
                     that
                     some of you will have felt that you had been kept in the dark. I am truly sorry for this but, in
                     actual

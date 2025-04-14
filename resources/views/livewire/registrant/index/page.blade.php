@@ -160,16 +160,15 @@ new class extends Component {
 
 <div>
     <div>
-        <div class="relative mb-3 w-full">
+        <div class="relative mb-6 w-full">
             <flux:heading size="xl" level="1">{{ __('Registrants') }}</flux:heading>
-            <flux:subheading size="lg" class="mb-6">{{ __('New registrants awaiting approval') }}</flux:subheading>
-            <flux:separator variant="subtle"/>
+            <flux:subheading size="lg">{{ __('Registrants awaiting approval') }}</flux:subheading>
         </div>
     </div>
 
     <!-- search field -->
-    <div class="grid grid-cols-12 items-center justify-between gap-4">
-        <div class="grid col-span-2 items-center gap-4">
+    <div class="flex flex-1/2 items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
             <flux:input icon="magnifying-glass" placeholder="Search..." type="text" class="w-full"
                         wire:model.live.debounce.500ms="search"/>
         </div>

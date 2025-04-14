@@ -178,19 +178,6 @@ new class extends Component {
                 ->orWhere('name', 'like', '%' . $this->search . '%')
                 ->orWhere('message', 'like', '%' . $this->search . '%');
 
-            /*// Ensure correct database formatting logic is applied
-            if (DB::getDriverName() === 'pgsql') {
-                // PostgreSQL: Use TO_CHAR for date formatting
-                $q->orWhereRaw("TO_CHAR(created_at, 'DD Mon YYYY, HH:MI PM') LIKE ?", [
-                    '%' . $this->search . '%',
-                ]);
-            } elseif (DB::getDriverName() === 'mysql') {
-                // MySQL: Use DATE_FORMAT for date formatting
-                $q->orWhereRaw("DATE_FORMAT(created_at, '%d %b %Y, %l:%i %p') LIKE ?", [
-                    '%' . $this->search . '%',
-                ]);
-            }*/
-
             $q->orWhereHas('replies.user', function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%');
             });
@@ -228,16 +215,15 @@ new class extends Component {
     <!--start blade view-->
 <div>
     <div>
-        <div class="relative mb-3 w-full">
-            <flux:heading size="xl" level="1">{{ __('Email') }}</flux:heading>
-            <flux:subheading size="lg" class="mb-6">{{ __('Emails awaiting a response.') }}</flux:subheading>
-            <flux:separator variant="subtle"/>
+        <div class="relative mb-6 w-full">
+            <flux:heading size="xl" level="1">{{ __('Mail') }}</flux:heading>
+            <flux:subheading size="lg">{{ __('Received Contact Us Emails') }}</flux:subheading>
         </div>
     </div>
 
     <!-- search field -->
-    <div class="grid grid-cols-12 items-center justify-between gap-4">
-        <div class="grid col-span-2 items-center gap-4">
+    <div class="flex flex-1/2 items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
             <flux:input icon="magnifying-glass" placeholder="Search..." type="text" class="w-full"
                         wire:model.live.debounce.500ms="search"/>
         </div>
@@ -392,20 +378,5 @@ new class extends Component {
                 </div>
             </form>
         </flux:modal>
-
-        <!--show replies modal-->
-        {{--<flux:modal wire:model.self="showRepliesModal" title="Replies" size="lg" class="max-w-lg w-auto">
-
-            <div class="flex flex-col w-full mt-10 gap-5">
-                @foreach($replies as $reply)
-                    <flux:heading size="sm" level="3">From: {{ $reply->user->name ?? 'N/A' }}</flux:heading>
-                    <flux:text>{{ $reply->message ?? 'N/A' }}</flux:text>
-                @endforeach
-            </div>
-            <div class="flex w-full items-end justify-end gap-4 mt-4">
-                <flux:button type="button" variant="primary" wire:click="showReplies = true">Cancel
-                </flux:button>
-            </div>
-        </flux:modal>--}}
     </flux:table>
 </div>

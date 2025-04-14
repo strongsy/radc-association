@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -82,6 +83,15 @@ class User extends Authenticatable implements MustVerifyEmail
      * Relationships
      */
     public function mail(): belongsToMany {
-        return $this->belongsToMany(MailUser::class, 'mail_user', 'user_id', 'mail_id');
+        return $this->belongsToMany(Reply::class, 'replies', 'user_id', 'mail_id');
+    }
+
+    public function events(): hasMany
+    {
+        return $this->hasMany(Event::class);
+    }
+    public function attending(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'attendances');
     }
 }
