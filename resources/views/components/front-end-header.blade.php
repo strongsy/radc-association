@@ -1,8 +1,15 @@
-<div class="flex w-full flex-col">
+{{-- css variable for hero image --}}
+{{--@php
+    $backgroundImage = Storage::disk('s3')->url('hero/hero02.png');
+    $backgroundStyles = "background-image: url('$backgroundImage');";
+    $backgroundClasses = "bg-no-repeat bg-cover bg-center bg-gray-700 bg-blend-multiply";
+@endphp--}}
+
+<div class="flex w-full flex-col bg-no-repeat bg-cover bg-centerbg-blend-multiply" {{--style="{{ $backgroundStyles }}"--}}>
     <!--navbar-->
-    <flux:container class="flex flex-row space-x-20 w-full items-center justify-between">
+    <flux:container class="flex flex-row space-x-20 w-full py-3 items-center justify-between">
         <a href="{{ route('home') }}" class="ml-2 mr-5 items-center space-x-2 lg:ml-0 hidden lg:flex" wire:navigate>
-            <x-app-logo/>
+            <x-app-logo class="text-white"/>
         </a>
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2"/>
 
@@ -17,7 +24,7 @@
     <flux:separator size="lg" variant="subtle"/>
 
     <!--hero-->
-    <flux:container class="flex flex-row gap-x-10 max-w-7xl text-center justify-between py-5">
+    <flux:container class="flex flex-row gap-x-10 max-w-7xl text-center justify-between py-5 my-10">
         <flux:container class="flex flex-col px-0! sm:mb-6 lg:text-left lg:mb-0 lg:pl-0">
             <h1 class="mb-4 font-bold leading-tight text-4xl">
                 Royal Army Dental Corps Association
