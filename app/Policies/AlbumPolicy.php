@@ -17,7 +17,7 @@ class AlbumPolicy
 
     public function view(User $user, Album $album): bool
     {
-        return $user->hasPermissionTo($album,'album-index');
+        return $user->hasPermissionTo($album, 'album-index');
     }
 
     public function create(User $user): bool
@@ -27,12 +27,12 @@ class AlbumPolicy
 
     public function update(User $user, Album $album): bool
     {
-        return $user->hasPermissionTo($album,'album-update');
+        return $user->hasPermissionTo($album, 'album-update');
     }
 
     public function delete(User $user, Album $album): bool
     {
-        return $user->hasPermissionTo($album,'album-destroy');
+        return $user->hasPermissionTo($album, 'album-destroy');
     }
 
     public function restore(User $user, Album $album): bool

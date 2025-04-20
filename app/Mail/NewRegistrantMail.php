@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use InvalidArgumentException;
 
 class NewRegistrantMail extends Mailable implements ShouldQueue
 {
@@ -17,13 +18,23 @@ class NewRegistrantMail extends Mailable implements ShouldQueue
 
     public function __construct(array $data)
     {
-       $this->data = $data;
+        $requiredKeys = ['name', 'email', 'community', 'membership', 'affiliation'];
+
+        foreach ($requiredKeys as $key) {
+            if (! array_key_exists($key, $data)) {
+                throw new InvalidArgumentException("Missing required key: {$key}");
+            }
+        }
+
+        $this->data = $data;
     }
 
     public function envelope(): Envelope
     {
+        $subject = $this->data['subject'] ?? 'New Registrant Submission';
+
         return new Envelope(
-            subject: 'New Registrant Submission',
+            subject: $subject,
         );
     }
 
@@ -32,11 +43,11 @@ class NewRegistrantMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.new-registrant',
             with: [
-                'name' => $this->data['name'],
-                'email' => $this->data['email'],
-                'community' => $this->data['community'],
-                'membership' => $this->data['membership'],
-                'affiliation' => $this->data['affiliation'],
+                'name' => $this->data['name'] ?? 'Unknown',
+                'email' => $this->data['email'] ?? 'Unknown',
+                'community' => $this->data['community'] ?? 'Unknown',
+                'membership' => $this->data['membership'] ?? 'Unknown',
+                'affiliation' => $this->data['affiliation'] ?? 'Unknown',
             ]);
     }
 

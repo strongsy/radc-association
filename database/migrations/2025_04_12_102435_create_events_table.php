@@ -5,15 +5,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('events', static function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->string('location');
             $table->date('date');
             $table->time('time');
+            $table->string('category');
+            $table->boolean('allow_guests')->default(false);
             $table->unsignedInteger('max_guests_per_user')->default(2);
             $table->integer('min_attendees');
             $table->integer('max_attendees');

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->mediumText('affiliation');
             $table->boolean('is_subscribed')->default(false);
             $table->boolean('is_blocked')->default(true);
+            $table->string('unsubscribe_token')->nullable()->unique();
             $table->rememberToken();
             $table->timestamps();
         });

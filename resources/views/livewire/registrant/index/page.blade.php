@@ -101,7 +101,7 @@ new class extends Component {
      */
     public function deleteRegistrant(int|string $registrantId): void
     {
-        if ($user->can('user-destroy')) {
+        if (Auth::user() && Auth::user()->can('user-destroy')) {
             $registrant = Registrant::findOrFail($registrantId);
 
             $this->authorize('delete', $registrant);

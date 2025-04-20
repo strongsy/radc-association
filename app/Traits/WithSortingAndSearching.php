@@ -5,13 +5,13 @@ namespace App\Traits;
 trait WithSortingAndSearching
 {
     public string $search = ''; // Search term
+
     public ?string $sortBy = null; // Column to sort by
+
     public ?string $sortDirection = null; // Sort direction (asc/desc)
 
     /**
      * Handle search updates and reset pagination.
-     *
-     * @return void
      */
     public function updatedSearch(): void
     {
@@ -21,9 +21,7 @@ trait WithSortingAndSearching
     /**
      * Clear a specific filter applied to the current instance.
      *
-     * @param string $filter The name of the filter to be cleared.
-     *
-     * @return void
+     * @param  string  $filter  The name of the filter to be cleared.
      */
     public function clearFilter(string $filter): void
     {
@@ -36,12 +34,8 @@ trait WithSortingAndSearching
         }
     }
 
-
-        /**
+    /**
      * Sort by the given column. Toggles between asc/desc.
-     *
-     * @param string $column
-     * @return void
      */
     public function sort(string $column): void
     {
@@ -55,8 +49,6 @@ trait WithSortingAndSearching
 
     /**
      * Clear the sorting (essentially reset to default or no sorting).
-     *
-     * @return void
      */
     public function clearSort(): void
     {
@@ -66,9 +58,6 @@ trait WithSortingAndSearching
 
     /**
      * Apply search filters to a query.
-     *
-     * @param $query
-     * @return mixed
      */
     /*protected function applySearchFilters($query): mixed
     {
@@ -95,9 +84,6 @@ trait WithSortingAndSearching
 
     /**
      * Apply sorting to a query.
-     *
-     * @param $query
-     * @return mixed
      */
     protected function applySorting($query): mixed
     {
@@ -107,6 +93,4 @@ trait WithSortingAndSearching
 
         return $query;
     }
-
-
 }

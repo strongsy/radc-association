@@ -13,6 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
+
+    ->withProviders([
+        // Other existing providers...
+        App\Providers\RouteBindingServiceProvider::class,
+    ])
+
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

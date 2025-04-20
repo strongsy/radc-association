@@ -17,7 +17,7 @@ new #[Layout('components.layouts.auth')] class extends Component
     public string $email = '';
     public string $subject = '';
     public string $message = '';
-    public HoneypotData $extraFields;
+    public ?HoneypotData $extraFields = null;
 
     use UsesSpamProtection;
 
@@ -54,7 +54,7 @@ new #[Layout('components.layouts.auth')] class extends Component
 
 
         $this->reset();
-        //$this->redirectIntended(route('home', absolute: false), navigate: true);
+        $this->redirectIntended(route('home', absolute: false), navigate: true);
     }
 }; ?>
 

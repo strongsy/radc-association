@@ -19,11 +19,13 @@ class Album extends Model
         'slug',
     ];
 
-    public function mail(): belongsTo {
+    public function mail(): belongsTo
+    {
         return $this->belongsTo(Gallery::class);
     }
 
-    public function images(): hasMany {
+    public function images(): hasMany
+    {
         return $this->hasMany(Image::class);
     }
 }

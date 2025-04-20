@@ -14,21 +14,21 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        //permission permissions
+        // permission permissions
         Permission::create(['name' => 'permission-index']);
         Permission::create(['name' => 'permission-create']);
         Permission::create(['name' => 'permission-read']);
         Permission::create(['name' => 'permission-update']);
         Permission::create(['name' => 'permission-destroy']);
 
-        //role permissions
+        // role permissions
         Permission::create(['name' => 'role-index']);
         Permission::create(['name' => 'role-create']);
         Permission::create(['name' => 'role-read']);
         Permission::create(['name' => 'role-update']);
         Permission::create(['name' => 'role-destroy']);
 
-        //mail permissions
+        // mail permissions
         Permission::create(['name' => 'mail-index']);
         Permission::create(['name' => 'mail-create']);
         Permission::create(['name' => 'mail-read']);
@@ -39,7 +39,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'mail-destroy']);
         Permission::create(['name' => 'mail-reply']);
 
-        //reply permissions
+        // reply permissions
         Permission::create(['name' => 'reply-index']);
         Permission::create(['name' => 'reply-create']);
         Permission::create(['name' => 'reply-read']);
@@ -49,7 +49,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'reply-force-delete']);
         Permission::create(['name' => 'reply-destroy']);
 
-        //registrant permissions
+        // registrant permissions
         Permission::create(['name' => 'registrant-index']);
         Permission::create(['name' => 'registrant-create']);
         Permission::create(['name' => 'registrant-read']);
@@ -57,7 +57,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'registrant-destroy']);
         Permission::create(['name' => 'registrant-authorize']);
 
-        //users permissions
+        // users permissions
         Permission::create(['name' => 'user-index']);
         Permission::create(['name' => 'user-create']);
         Permission::create(['name' => 'user-read']);
@@ -67,7 +67,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'user-unblock']);
         Permission::create(['name' => 'user-destroy']);
 
-        //event permissions
+        // event permissions
         Permission::create(['name' => 'event-index']);
         Permission::create(['name' => 'event-create']);
         Permission::create(['name' => 'event-read']);
@@ -80,7 +80,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'event-restore']);
         Permission::create(['name' => 'event-force-delete']);
 
-        //post permissions
+        // post permissions
         Permission::create(['name' => 'post-index']);
         Permission::create(['name' => 'post-create']);
         Permission::create(['name' => 'post-read']);
@@ -93,7 +93,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'post-restore']);
         Permission::create(['name' => 'post-force-delete']);
 
-        //article permissions
+        // article permissions
         Permission::create(['name' => 'article-index']);
         Permission::create(['name' => 'article-create']);
         Permission::create(['name' => 'article-read']);
@@ -106,7 +106,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'article-restore']);
         Permission::create(['name' => 'article-force-delete']);
 
-        //story permissions
+        // story permissions
         Permission::create(['name' => 'story-index']);
         Permission::create(['name' => 'story-create']);
         Permission::create(['name' => 'story-read']);
@@ -119,7 +119,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'story-restore']);
         Permission::create(['name' => 'story-force-delete']);
 
-        //gallery permissions
+        // gallery permissions
         Permission::create(['name' => 'gallery-index']);
         Permission::create(['name' => 'gallery-create']);
         Permission::create(['name' => 'gallery-read']);
@@ -132,7 +132,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'gallery-restore']);
         Permission::create(['name' => 'gallery-force-delete']);
 
-        //album permissions
+        // album permissions
         Permission::create(['name' => 'album-index']);
         Permission::create(['name' => 'album-create']);
         Permission::create(['name' => 'album-read']);
@@ -145,7 +145,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'album-restore']);
         Permission::create(['name' => 'album-force-delete']);
 
-        //image permissions
+        // image permissions
         Permission::create(['name' => 'image-index']);
         Permission::create(['name' => 'image-create']);
         Permission::create(['name' => 'image-read']);
@@ -162,13 +162,13 @@ class RoleAndPermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         /**************** create roles ********************/
-        Role::create(['name' => 'super-admin'])->syncPermissions(Permission::all()); //my role only
-        Role::create(['name' => 'editor'])->syncPermissions(Permission::all()); //secretary role
+        Role::create(['name' => 'super-admin'])->syncPermissions(Permission::all()); // my role only
+        Role::create(['name' => 'editor'])->syncPermissions(Permission::all()); // secretary role
         Role::create(['name' => 'moderator'])->syncPermissions(['event-index', 'event-create', 'event-read', 'event-update', 'event-publish', 'event-unpublish', 'event-approve', 'event-unapproved', 'event-destroy', 'post-index', 'post-create', 'post-read',
-            'post-update', 'post-publish', 'post-unpublish', 'post-approve', 'post-unapproved', 'article-index', 'article-read', 'story-index', 'story-create', 'story-read', 'story-update', 'story-publish', 'story-unpublish', 'story-approve', 'story-unapproved']); //moderator of posts
-        Role::create(['name' => 'admin'])->syncPermissions(); //admin role
+            'post-update', 'post-publish', 'post-unpublish', 'post-approve', 'post-unapproved', 'article-index', 'article-read', 'story-index', 'story-create', 'story-read', 'story-update', 'story-publish', 'story-unpublish', 'story-approve', 'story-unapproved']); // moderator of posts
+        Role::create(['name' => 'admin'])->syncPermissions(); // admin role
         Role::create(['name' => 'user'])->syncPermissions(['event-index', 'event-create', 'event-read', 'event-update', 'post-index', 'post-create', 'post-read',
-            'post-update', 'article-index', 'article-read', 'story-index', 'story-create', 'story-read', 'story-update']); //user role
+            'post-update', 'article-index', 'article-read', 'story-index', 'story-create', 'story-read', 'story-update']); // user role
         Role::create(['name' => 'guest'])->syncPermissions('mail-send');
     }
 }

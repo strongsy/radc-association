@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Enums\Community;
 use App\Enums\Membership;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,7 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'affiliation',
         'is_subscribed',
         'is_blocked',
+        'unsubscribe_token',
     ];
 
     /**
@@ -63,6 +64,19 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(static function ($user) {
+            $user->unsubscribe_token = $user->unsubscribe_token ?? Str::random(32);
+        });
+
+        static::updating(static function ($user) {
+            if (! $user->unsubscribe_token) {
+                $user->unsubscribe_token = Str::random(32);
+            }
+        });
+    }
+
     /**
      * Get the user's initials
      */
@@ -74,24 +88,34 @@ class User extends Authenticatable implements MustVerifyEmail
             ->implode('');
     }
 
-    public function getFirstName(): string
+    public function getFirstNameAttribute(): string
     {
         return explode(' ', $this->name)[0];
     }
 
     /**
-     * Relationships
+     * Define the many-to-many relationship between the current model and the Reply model.
      */
-    public function mail(): belongsToMany {
+    public function mail(): belongsToMany
+    {
         return $this->belongsToMany(Reply::class, 'replies', 'user_id', 'mail_id');
     }
 
+    /**
+     * Define the one-to-many relationship between the current model and the Event model.
+     */
     public function events(): hasMany
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(Event::class, 'user_id');
     }
+
+    /**
+     * Define the many-to-many relationship between the current model and the Event model,
+     * representing the events the user is attending.
+     * Includes timestamp information for the pivot table entries.
+     */
     public function attending(): BelongsToMany
     {
-        return $this->belongsToMany(Event::class, 'attendances');
+        return $this->belongsToMany(Event::class, 'attendees', 'user_id', 'event_id')->withTimestamps();
     }
 }

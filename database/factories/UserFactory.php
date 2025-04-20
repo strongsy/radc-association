@@ -35,6 +35,7 @@ class UserFactory extends Factory
             'affiliation' => fake()->paragraphs(2, true),
             'is_subscribed' => fake()->randomelement([true, false]),
             'is_blocked' => fake()->randomelement([true, false]),
+            'unsubscribe_token' => Str::random(32),
             'remember_token' => Str::random(10),
         ];
     }

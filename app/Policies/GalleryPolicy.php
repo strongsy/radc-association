@@ -17,7 +17,7 @@ class GalleryPolicy
 
     public function view(User $user, Gallery $gallery): bool
     {
-        return $user->hasPermissionTo($gallery,'gallery-index');
+        return $user->hasPermissionTo($gallery, 'gallery-index');
     }
 
     public function create(User $user): bool
@@ -27,21 +27,21 @@ class GalleryPolicy
 
     public function update(User $user, Gallery $gallery): bool
     {
-        return $user->hasPermissionTo($gallery,'gallery-update');
+        return $user->hasPermissionTo($gallery, 'gallery-update');
     }
 
     public function delete(User $user, Gallery $gallery): bool
     {
-        return $user->hasPermissionTo($gallery,'gallery-destroy');
+        return $user->hasPermissionTo($gallery, 'gallery-destroy');
     }
 
     public function restore(User $user, Gallery $gallery): bool
     {
-        return $user->hasPermissionTo($gallery,'gallery-restore');
+        return $user->hasPermissionTo($gallery, 'gallery-restore');
     }
 
     public function forceDelete(User $user, Gallery $gallery): bool
     {
-        return $user->hasPermissionTo($gallery,'gallery-force-delete');
+        return $user->hasPermissionTo($gallery, 'gallery-force-delete');
     }
 }

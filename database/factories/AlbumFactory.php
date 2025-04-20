@@ -16,8 +16,6 @@ class AlbumFactory extends Factory
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),
             'slug' => $this->faker->slug(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
         ];
     }
 }

@@ -15,8 +15,6 @@ class ImageFactory extends Factory
         return [
             'title' => $this->faker->word(),
             'caption' => $this->faker->word(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
         ];
     }
 }

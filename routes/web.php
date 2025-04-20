@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use Spatie\Honeypot\ProtectAgainstSpam;
@@ -32,8 +34,24 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Volt::route('contact', 'auth.contact')->middleware(ProtectAgainstSpam::class)->name('contact');
+// Unsubscribe route
+Route::get('/unsubscribe/{token}', static function ($token) {
+    Log::info('Received unsubscribe token: '.$token);
 
+    $user = User::where('unsubscribe_token', $token)->first();
+
+    if (! $user) {
+
+        return response('Invalid unsubscribe token.', 404);
+    }
+
+    $user->update(['is_subscribed' => false]);
+
+    return view('emails.unsubscribed');
+})->name('unsubscribe');
+
+// Volt routes
+Volt::route('contact', 'auth.contact')->middleware(ProtectAgainstSpam::class)->name('contact');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
@@ -52,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('posts', 'post.index.page')->name('post.index')->middleware('can:post-index');
     Volt::route('events', 'event.index.page')->name('event.index')->middleware('can:event-index');
     Volt::route('events/create', 'event.create.page')->name('event.create')->middleware('can:event-create');
+    Volt::route('events/{event}/read', 'event.read.page')->name('event.read')->middleware('can:event-read');
     Volt::route('galleries', 'gallery.index.page')->name('gallery.index')->middleware('can:gallery-index');
 });
 

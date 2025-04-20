@@ -17,7 +17,7 @@ class EventPolicy
 
     public function view(User $user, Event $event): bool
     {
-        return $user->hasPermissionTo($event,'event-index');
+        return $user->hasPermissionTo($event, 'event-index');
     }
 
     public function create(User $user): bool
@@ -27,21 +27,21 @@ class EventPolicy
 
     public function update(User $user, Event $event): bool
     {
-        return $user->hasPermissionTo($event,'event-update');
+        return $user->hasPermissionTo($event, 'event-update');
     }
 
     public function delete(User $user, Event $event): bool
     {
-        return $user->hasPermissionTo($event,'event-destroy');
+        return $user->hasPermissionTo($event, 'event-destroy');
     }
 
     public function restore(User $user, Event $event): bool
     {
-        return $user->hasPermissionTo($event,'event-restore');
+        return $user->hasPermissionTo($event, 'event-restore');
     }
 
     public function forceDelete(User $user, Event $event): bool
     {
-        return $user->hasPermissionTo($event,'event-force-delete');
+        return $user->hasPermissionTo($event, 'event-force-delete');
     }
 }

@@ -17,11 +17,11 @@ class RegistrantPolicy
 
     public function delete(User $user, Registrant $registrant): bool
     {
-        return $user->hasPermissionTo($registrant,'registrant-destroy');
+        return $user->hasPermissionTo($registrant, 'registrant-destroy');
     }
 
     public function authorize(User $user, Registrant $registrant): bool
     {
-        return $user->hasPermissionTo($registrant,'registrant-authorize');
+        return $user->hasPermissionTo($registrant, 'registrant-authorize');
     }
 }

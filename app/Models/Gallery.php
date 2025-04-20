@@ -16,8 +16,8 @@ class Gallery extends Model
         'caption',
     ];
 
-    public function mail(): hasMany {
+    public function mail(): hasMany
+    {
         return $this->hasMany(Album::class);
     }
-
 }

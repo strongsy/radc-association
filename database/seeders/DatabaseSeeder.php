@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Attendee;
+use App\Models\Comment;
+use App\Models\Event;
+use App\Models\EventGuest;
+use App\Models\Rating;
 use App\Models\User;
-use Database\Factories\AttendanceFactory;
-use Database\Factories\EventFactory;
-use Database\Factories\MailFactory;
-use Database\Factories\RegistrantFactory;
 use Illuminate\Database\Seeder;
-use Random\RandomException;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,12 +18,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
         // Create an instance of the RoleAndPermissionSeeder class
-        $roleAndPermissionSeeder = new RoleAndPermissionSeeder();
+        $roleAndPermissionSeeder = new RoleAndPermissionSeeder;
         $roleAndPermissionSeeder->run(); // Call the run method on the instance
 
         /**
-         * create super admin user
+         * create a super admin user
          */
         $user = User::factory()->create([
             'name' => 'Paul Armstrong',
@@ -33,29 +35,86 @@ class DatabaseSeeder extends Seeder
             'affiliation' => 'All files within the bucket are public and are publicly accessible via the Internet via a Laravel Cloud provided URL. These buckets are typically used for publicly viewable assets like user avatars.',
             'is_subscribed' => true,
             'is_blocked' => false,
+            'unsubscribe_token' => Str::random(32),
         ]);
 
-        //assign super-admin to my account
         $user->assignRole('super-admin');
 
-        //create registrants
-        RegistrantFactory::new()->count(20)->create();
+        // Create users
+        $users = User::factory(10)->create();
 
-        //create mail
-        MailFactory::new()->count(5)->create();
+        // Create events
+        $pastEvents = Event::factory(5)
+            ->past()
+            ->create(['user_id' => $users->random()->id]);
 
-        //create users
-        $newUser = User::factory(20)->create();
+        $futureEvents = Event::factory(10)
+            ->future()
+            ->create(['user_id' => $users->random()->id]);
 
-        //loop through added users and assign user role
-        foreach ($newUser as $user) {
-            $user->assignRole('user');
-        }
+        $events = $pastEvents->merge($futureEvents);
 
-        //create events
-        EventFactory::new()->count(10)->create();
+        // Add attendees to events
+        $events->each(function ($event) use ($users) {
+            // Add a random number of attendees (between 3 and 8)
+            $attendeeCount = random_int(3, 8);
+            $randomUsers = $users->random($attendeeCount);
 
-        //create attendees
-        AttendanceFactory::new()->count(10)->create();
+            foreach ($randomUsers as $user) {
+                Attendee::factory()->create([
+                    'event_id' => $event->id,
+                    'user_id' => $user->id,
+                    'is_attending' => true,
+                ]);
+            }
+
+            // Add some guests for events that allow them
+            if ($event->allow_guests) {
+                $guestInviters = $randomUsers->random(min(3, $randomUsers->count()));
+
+                foreach ($guestInviters as $inviter) {
+                    $guestCount = 0;
+                    if ($event->max_guests_per_user >= 1) {
+                        $guestCount = min(
+                            random_int(1, $event->max_guests_per_user),
+                            $event->max_guests_per_user
+                        );
+                    }
+
+
+                    for ($i = 0; $i < $guestCount; $i++) {
+                        EventGuest::factory()->create([
+                            'event_id' => $event->id,
+                            'invited_by' => $inviter->id,
+                        ]);
+                    }
+                }
+            }
+
+            // Add comments to events
+            $commentCount = random_int(2, 10); // Random number of comments per event
+            $commenters = $users->random(min($commentCount, $users->count()));
+
+            foreach ($commenters as $commenter) {
+                Comment::factory()->create([
+                    'user_id' => $commenter->id,
+                    'commentable_id' => $event->id,
+                    'commentable_type' => Event::class,
+                ]);
+            }
+
+            // Add ratings for past events
+            if ($event->date < now()) {
+                $raters = $randomUsers->random(min(5, $randomUsers->count()));
+
+                foreach ($raters as $user) {
+                    Rating::factory()->create([
+                        'ratable_id' => $event->id,
+                        'ratable_type' => Event::class,
+                        'user_id' => $user->id,
+                    ]);
+                }
+            }
+        });
     }
 }

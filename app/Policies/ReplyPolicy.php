@@ -17,7 +17,7 @@ class ReplyPolicy
 
     public function view(User $user, Reply $replies): bool
     {
-        return $user->hasPermissionTo($replies,'reply-index');
+        return $user->hasPermissionTo($replies, 'reply-index');
     }
 
     public function create(User $user): bool
@@ -27,21 +27,21 @@ class ReplyPolicy
 
     public function update(User $user, Reply $replies): bool
     {
-        return $user->hasPermissionTo($replies,'reply-update');
+        return $user->hasPermissionTo($replies, 'reply-update');
     }
 
     public function delete(User $user, Reply $replies): bool
     {
-        return $user->hasPermissionTo($replies,'reply-destroy');
+        return $user->hasPermissionTo($replies, 'reply-destroy');
     }
 
     public function restore(User $user, Reply $replies): bool
     {
-        return $user->hasPermissionTo($replies,'reply-restore');
+        return $user->hasPermissionTo($replies, 'reply-restore');
     }
 
     public function forceDelete(User $user, Reply $replies): bool
     {
-        return $user->hasPermissionTo($replies,'reply-force-delete');
+        return $user->hasPermissionTo($replies, 'reply-force-delete');
     }
 }

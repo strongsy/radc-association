@@ -1,29 +1,43 @@
 @component('mail::message')
-# New Registration Form Submission
+# @lang('New Registration Form Submission')
 
-You’ve received a new registration form submission:
+@lang('You’ve received a new registration form submission:')
 
-## Name:
+@if(!empty($name))
+## @lang('Name:')
 {{ $name }}
+@endif
 
-## Email:
+@if(!empty($email))
+## @lang('Email:')
 {{ $email }}
+@endif
 
-## Community:
+@if(!empty($community))
+## @lang('Community:')
 {{ $community }}
+@endif
 
-## Membership:
+@if(!empty($membership))
+## @lang('Membership:')
 {{ $membership }}
+@endif
 
-## Affiliation:
+@if(!empty($affiliation))
+## @lang('Affiliation:')
 {{ $affiliation }}
+@endif
 
-Please action this registration request within 72 hours.
+@lang('Please action this registration request within 72 hours.')
 
-@component('mail::button', ['url' => config('app.url') . '/registrants'])
-Registrants List
+@component('mail::button', ['url' => route('registrant.index')])
+@lang('Registrants List')
 @endcomponent
 
-Thanks,<br>
+@lang('Thanks'),
 {{ config('app.name') }}
+
+@slot('footer')
+You are receiving this email because you signed up for {{ config('app.name') }}. If you no longer wish to receive these emails, please [unsubscribe]({{ config('app.url') }}/unsubscribe).
+@endslot
 @endcomponent

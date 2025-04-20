@@ -10,6 +10,7 @@ enum Community: string
     case Veteran = 'Veteran';
     case Civilian = 'Civilian';
     case Other = 'Other';
+
     public function variant(): string
     {
         return match ($this) {

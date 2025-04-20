@@ -17,7 +17,7 @@ class ImagePolicy
 
     public function view(User $user, Image $image): bool
     {
-        return $user->hasPermissionTo($image,'image-index');
+        return $user->hasPermissionTo($image, 'image-index');
     }
 
     public function create(User $user): bool
@@ -25,20 +25,11 @@ class ImagePolicy
         return $user->hasPermissionTo('image-create');
     }
 
-    public function update(User $user, Image $image): bool
-    {
+    public function update(User $user, Image $image): bool {}
 
-    }
+    public function delete(User $user, Image $image): bool {}
 
-    public function delete(User $user, Image $image): bool
-    {
-    }
+    public function restore(User $user, Image $image): bool {}
 
-    public function restore(User $user, Image $image): bool
-    {
-    }
-
-    public function forceDelete(User $user, Image $image): bool
-    {
-    }
+    public function forceDelete(User $user, Image $image): bool {}
 }

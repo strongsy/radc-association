@@ -17,7 +17,7 @@ class MailPolicy
 
     public function view(User $user, Mail $mail): bool
     {
-        return $user->hasPermissionTo($mail,'mail-list');
+        return $user->hasPermissionTo($mail, 'mail-list');
     }
 
     public function create(User $user): bool
@@ -27,21 +27,21 @@ class MailPolicy
 
     public function update(User $user, Mail $mail): bool
     {
-        return $user->hasPermissionTo($mail,'mail-update');
+        return $user->hasPermissionTo($mail, 'mail-update');
     }
 
     public function delete(User $user, Mail $mail): bool
     {
-        return $user->hasPermissionTo($mail,'mail-destroy');
+        return $user->hasPermissionTo($mail, 'mail-destroy');
     }
 
     public function restore(User $user, Mail $mail): bool
     {
-        return $user->hasPermissionTo($mail,'mail-restore');
+        return $user->hasPermissionTo($mail, 'mail-restore');
     }
 
     public function forceDelete(User $user, Mail $mail): bool
     {
-        return $user->hasPermissionTo($mail,'mail-force-delete');
+        return $user->hasPermissionTo($mail, 'mail-force-delete');
     }
 }

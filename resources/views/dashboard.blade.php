@@ -1,7 +1,7 @@
 <x-layouts.app :title="__('Dashboard')">
     <div class="relative mb-6 w-full">
         <flux:heading size="xl" level="1">{{ __('Dashboard') }}</flux:heading>
-        <flux:subheading size="lg" class="mb-6">Welcome to your dashboard {{ Auth::check() ? Auth::user()->getFirstName() : null }}</flux:subheading>
+        <flux:subheading size="lg" class="mb-6">Welcome to your dashboard {{ Auth::check() ? Auth::user()->getFirstNameAttribute() : null }}</flux:subheading>
         <flux:separator variant="subtle" />
     </div>
 
