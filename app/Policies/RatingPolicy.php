@@ -12,18 +12,38 @@ class RatingPolicy
 
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasPermissionTo('rating-index');
     }
 
-    public function view(User $user, Rating $rating): bool {}
+    public function view(User $user, Rating $rating): bool
+    {
 
-    public function create(User $user): bool {}
+        return $user->hasPermissionTo($rating, 'rating-index');
+    }
 
-    public function update(User $user, Rating $rating): bool {}
+    public function create(User $user): bool
+    {
 
-    public function delete(User $user, Rating $rating): bool {}
+        return $user->hasPermissionTo('rating-create');
+    }
 
-    public function restore(User $user, Rating $rating): bool {}
+    public function update(User $user, Rating $rating): bool
+    {
+        return $user->hasPermissionTo($rating, 'rating-update');
+    }
 
-    public function forceDelete(User $user, Rating $rating): bool {}
+    public function delete(User $user, Rating $rating): bool
+    {
+        return $user->hasPermissionTo($rating, 'rating-destroy');
+    }
+
+    public function restore(User $user, Rating $rating): bool
+    {
+        return $user->hasPermissionTo($rating, 'rating-restore');
+    }
+
+    public function forceDelete(User $user, Rating $rating): bool
+    {
+        return $user->hasPermissionTo($rating, 'rating-force-delete');
+    }
 }

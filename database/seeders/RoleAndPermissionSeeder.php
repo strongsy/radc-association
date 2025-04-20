@@ -158,6 +158,19 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'image-restore']);
         Permission::create(['name' => 'image-force-delete']);
 
+        // rating permissions
+        Permission::create(['name' => 'rating-index']);
+        Permission::create(['name' => 'rating-create']);
+        Permission::create(['name' => 'rating-read']);
+        Permission::create(['name' => 'rating-publish']);
+        Permission::create(['name' => 'rating-unpublish']);
+        Permission::create(['name' => 'rating-approve']);
+        Permission::create(['name' => 'rating-unapproved']);
+        Permission::create(['name' => 'rating-update']);
+        Permission::create(['name' => 'rating-destroy']);
+        Permission::create(['name' => 'rating-restore']);
+        Permission::create(['name' => 'rating-force-delete']);
+
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 

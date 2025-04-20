@@ -25,11 +25,23 @@ class ImagePolicy
         return $user->hasPermissionTo('image-create');
     }
 
-    public function update(User $user, Image $image): bool {}
+    public function update(User $user, Image $image): bool
+    {
+        return $user->hasPermissionTo($image, 'image-update');
+    }
 
-    public function delete(User $user, Image $image): bool {}
+    public function delete(User $user, Image $image): bool
+    {
+        return $user->hasPermissionTo($image, 'image-destroy');
+    }
 
-    public function restore(User $user, Image $image): bool {}
+    public function restore(User $user, Image $image): bool
+    {
+        return $user->hasPermissionTo($image, 'image-restore');
+    }
 
-    public function forceDelete(User $user, Image $image): bool {}
+    public function forceDelete(User $user, Image $image): bool
+    {
+        return $user->hasPermissionTo($image, 'image-force-delete');
+    }
 }

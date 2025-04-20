@@ -6,7 +6,9 @@ use App\Models\Attendee;
 use App\Models\Comment;
 use App\Models\Event;
 use App\Models\EventGuest;
+use App\Models\Mail;
 use App\Models\Rating;
+use App\Models\Registrant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -41,7 +43,15 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('super-admin');
 
         // Create users
-        $users = User::factory(10)->create();
+        $users = User::factory(20)->create();
+
+        foreach ($users as $user) {
+            $user->assignRole('user');
+        }
+
+        Registrant::factory(20)->create();
+
+        Mail::factory(10)->create();
 
         // Create events
         $pastEvents = Event::factory(5)
@@ -80,7 +90,6 @@ class DatabaseSeeder extends Seeder
                             $event->max_guests_per_user
                         );
                     }
-
 
                     for ($i = 0; $i < $guestCount; $i++) {
                         EventGuest::factory()->create([

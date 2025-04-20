@@ -24,7 +24,7 @@ class EventFactory extends Factory
     {
         return [
             'title' => $this->faker->words(3, true),
-            'description' => $this->faker->text(),
+            'description' => $this->faker->paragraphs(4, true),
             'location' => $this->faker->address(),
             'date' => $this->faker->dateTimeBetween('-10 days', '+10 days'),
             'time' => $this->faker->time(),
